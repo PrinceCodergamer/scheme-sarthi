@@ -1,0 +1,208 @@
+{
+  "scheme_id": "pm-kisan",
+  "version": "1.0",
+  "sections": [
+    {
+      "id": "personal",
+      "title_en": "Personal Information",
+      "title_hi": "व्यक्तिगत जानकारी",
+      "fields": [
+        {
+          "id": "applicant_name",
+          "label_en": "Applicant Name",
+          "label_hi": "आवेदक का नाम",
+          "type": "text",
+          "required": true,
+          "validation": { "min_length": 2, "max_length": 100 },
+          "auto_fill": "name",
+          "pdf_mapping": "field_1"
+        },
+        {
+          "id": "father_name",
+          "label_en": "Father's Name",
+          "label_hi": "पिता का नाम",
+          "type": "text",
+          "required": true,
+          "validation": { "min_length": 2, "max_length": 100 },
+          "pdf_mapping": "field_2"
+        },
+        {
+          "id": "aadhaar",
+          "label_en": "Aadhaar Number",
+          "label_hi": "आधार संख्या",
+          "type": "aadhaar",
+          "required": true,
+          "validation": { "pattern": "^\\d{12}$" },
+          "auto_fill": "aadhaar",
+          "pdf_mapping": "field_3"
+        },
+        {
+          "id": "mobile",
+          "label_en": "Mobile Number",
+          "label_hi": "मोबाइल नंबर",
+          "type": "phone",
+          "required": true,
+          "validation": { "pattern": "^\\d{10}$" },
+          "auto_fill": "phone",
+          "pdf_mapping": "field_4"
+        },
+        {
+          "id": "dob",
+          "label_en": "Date of Birth",
+          "label_hi": "जन्म तिथि",
+          "type": "date",
+          "required": true,
+          "auto_fill": "dob",
+          "pdf_mapping": "field_5"
+        },
+        {
+          "id": "gender",
+          "label_en": "Gender",
+          "label_hi": "लिंग",
+          "type": "radio",
+          "required": true,
+          "options": [
+            { "value": "male", "label_en": "Male", "label_hi": "पुरुष" },
+            { "value": "female", "label_en": "Female", "label_hi": "महिला" },
+            { "value": "other", "label_en": "Other", "label_hi": "अन्य" }
+          ],
+          "auto_fill": "gender",
+          "pdf_mapping": "field_6"
+        },
+        {
+          "id": "category",
+          "label_en": "Category",
+          "label_hi": "श्रेणी",
+          "type": "select",
+          "required": true,
+          "options": [
+            { "value": "general", "label_en": "General", "label_hi": "सामान्य" },
+            { "value": "sc", "label_en": "SC", "label_hi": "अनुसूचित जाति" },
+            { "value": "st", "label_en": "ST", "label_hi": "अनुसूचित जनजाति" },
+            { "value": "obc", "label_en": "OBC", "label_hi": "अन्य पिछड़ा वर्ग" }
+          ],
+          "pdf_mapping": "field_7"
+        }
+      ]
+    },
+    {
+      "id": "bank",
+      "title_en": "Bank Details",
+      "title_hi": "बैंक विवरण",
+      "fields": [
+        {
+          "id": "bank_name",
+          "label_en": "Bank Name",
+          "label_hi": "बैंक का नाम",
+          "type": "select",
+          "required": true,
+          "options": [
+            { "value": "sbi", "label_en": "State Bank of India", "label_hi": "भारतीय स्टेट बैंक" },
+            { "value": "pnb", "label_en": "Punjab National Bank", "label_hi": "पंजाब नेशनल बैंक" },
+            { "value": "boi", "label_en": "Bank of India", "label_hi": "बैंक ऑफ इंडिया" },
+            { "value": "canara", "label_en": "Canara Bank", "label_hi": "केनरा बैंक" },
+            { "value": "other", "label_en": "Other", "label_hi": "अन्य" }
+          ],
+          "pdf_mapping": "field_8"
+        },
+        {
+          "id": "account_number",
+          "label_en": "Account Number",
+          "label_hi": "खाता संख्या",
+          "type": "number",
+          "required": true,
+          "validation": { "min_length": 9, "max_length": 18 },
+          "auto_fill": "bank_account",
+          "pdf_mapping": "field_9"
+        },
+        {
+          "id": "ifsc_code",
+          "label_en": "IFSC Code",
+          "label_hi": "IFSC कोड",
+          "type": "text",
+          "required": true,
+          "validation": { "pattern": "^[A-Z]{4}0[A-Z0-9]{6}$" },
+          "pdf_mapping": "field_10"
+        }
+      ]
+    },
+    {
+      "id": "land",
+      "title_en": "Land Details",
+      "title_hi": "भूमि विवरण",
+      "fields": [
+        {
+          "id": "land_area",
+          "label_en": "Land Area (in hectares)",
+          "label_hi": "भूमि क्षेत्रफल (हेक्टेयर में)",
+          "type": "number",
+          "required": true,
+          "validation": { "min": 0.01, "max": 100 },
+          "auto_fill": "land_acres",
+          "pdf_mapping": "field_11"
+        },
+        {
+          "id": "land_location",
+          "label_en": "Land Location (Village/Tehsil)",
+          "label_hi": "भूमि स्थान (गांव/तहसील)",
+          "type": "text",
+          "required": true,
+          "validation": { "min_length": 3, "max_length": 200 },
+          "pdf_mapping": "field_12"
+        }
+      ]
+    },
+    {
+      "id": "declaration",
+      "title_en": "Declaration",
+      "title_hi": "घोषणा",
+      "fields": [
+        {
+          "id": "declaration_accept",
+          "label_en": "I hereby declare that all information provided is true and correct",
+          "label_hi": "मैं घोषणा करता हूं कि दी गई सभी जानकारी सत्य और सही है",
+          "type": "declaration",
+          "required": true,
+          "pdf_mapping": "field_13"
+        }
+      ]
+    }
+  ],
+  "documents": [
+    {
+      "id": "aadhaar",
+      "name_en": "Aadhaar Card",
+      "name_hi": "आधार कार्ड",
+      "required": true,
+      "auto_available": true
+    },
+    {
+      "id": "land_records",
+      "name_en": "Land Records",
+      "name_hi": "भूमि रिकॉर्ड / खतौनी",
+      "required": true,
+      "auto_available": false
+    },
+    {
+      "id": "bank_passbook",
+      "name_en": "Bank Passbook",
+      "name_hi": "बैंक पासबुक",
+      "required": true,
+      "auto_available": false
+    },
+    {
+      "id": "photograph",
+      "name_en": "Passport Size Photograph",
+      "name_hi": "पासपोर्ट साइज़ फोटो",
+      "required": true,
+      "auto_available": false
+    }
+  ],
+  "official": {
+    "website": "https://www.pmkisan.gov.in",
+    "guideline_pdf": "https://pmkisan.gov.in/Documents/Guidelines.pdf",
+    "application_portal": "https://pmkisan.gov.in",
+    "helpline": "1800-180-1551",
+    "csc_required": true
+  }
+}

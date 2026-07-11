@@ -1,0 +1,25 @@
+{
+  "name": "Scheme Sarthi - योजना सारथी",
+  "short_name": "Scheme Sarthi",
+  "description": "Govt Scheme Lapse Revival Engine - Detect and revive lapsed welfare scheme enrollments",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#1B4B8F",
+  "background_color": "#F7F9FC",
+  "lang": "hi",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

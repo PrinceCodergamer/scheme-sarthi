@@ -1,0 +1,272 @@
+{
+  "scheme_id": "pm-fasal-bima",
+  "version": "1.0",
+  "sections": [
+    {
+      "id": "personal",
+      "title_en": "Personal Information",
+      "title_hi": "व्यक्तिगत जानकारी",
+      "fields": [
+        {
+          "id": "farmer_name",
+          "label_en": "Farmer Name",
+          "label_hi": "किसान का नाम",
+          "type": "text",
+          "required": true,
+          "validation": { "min_length": 2, "max_length": 100 },
+          "auto_fill": "name",
+          "pdf_mapping": "field_1"
+        },
+        {
+          "id": "aadhaar",
+          "label_en": "Aadhaar Number",
+          "label_hi": "आधार संख्या",
+          "type": "aadhaar",
+          "required": true,
+          "validation": { "pattern": "^\\d{12}$" },
+          "auto_fill": "aadhaar",
+          "pdf_mapping": "field_2"
+        },
+        {
+          "id": "mobile",
+          "label_en": "Mobile Number",
+          "label_hi": "मोबाइल नंबर",
+          "type": "phone",
+          "required": true,
+          "validation": { "pattern": "^\\d{10}$" },
+          "auto_fill": "phone",
+          "pdf_mapping": "field_3"
+        },
+        {
+          "id": "village",
+          "label_en": "Village",
+          "label_hi": "गांव",
+          "type": "text",
+          "required": true,
+          "validation": { "min_length": 2, "max_length": 100 },
+          "pdf_mapping": "field_4"
+        },
+        {
+          "id": "district",
+          "label_en": "District",
+          "label_hi": "जिला",
+          "type": "text",
+          "required": true,
+          "auto_fill": "district",
+          "pdf_mapping": "field_5"
+        },
+        {
+          "id": "state",
+          "label_en": "State",
+          "label_hi": "राज्य",
+          "type": "select",
+          "required": true,
+          "options": [
+            { "value": "Andhra Pradesh", "label_en": "Andhra Pradesh", "label_hi": "आंध्र प्रदेश" },
+            { "value": "Bihar", "label_en": "Bihar", "label_hi": "बिहार" },
+            { "value": "Madhya Pradesh", "label_en": "Madhya Pradesh", "label_hi": "मध्य प्रदेश" },
+            { "value": "Maharashtra", "label_en": "Maharashtra", "label_hi": "महाराष्ट्र" },
+            { "value": "Uttar Pradesh", "label_en": "Uttar Pradesh", "label_hi": "उत्तर प्रदेश" },
+            { "value": "Rajasthan", "label_en": "Rajasthan", "label_hi": "राजस्थान" },
+            { "value": "Punjab", "label_en": "Punjab", "label_hi": "पंजाब" },
+            { "value": "Haryana", "label_en": "Haryana", "label_hi": "हरियाणा" },
+            { "value": "Gujarat", "label_en": "Gujarat", "label_hi": "गुजरात" },
+            { "value": "Others", "label_en": "Other", "label_hi": "अन्य" }
+          ],
+          "auto_fill": "state",
+          "pdf_mapping": "field_6"
+        }
+      ]
+    },
+    {
+      "id": "crop",
+      "title_en": "Crop Details",
+      "title_hi": "फसल विवरण",
+      "fields": [
+        {
+          "id": "crop_name",
+          "label_en": "Crop Name",
+          "label_hi": "फसल का नाम",
+          "type": "select",
+          "required": true,
+          "options": [
+            { "value": "wheat", "label_en": "Wheat", "label_hi": "गेहूं" },
+            { "value": "rice", "label_en": "Rice", "label_hi": "चावल" },
+            { "value": "sugarcane", "label_en": "Sugarcane", "label_hi": "गन्ना" },
+            { "value": "cotton", "label_en": "Cotton", "label_hi": "कपास" },
+            { "value": "groundnut", "label_en": "Groundnut", "label_hi": "मूंगफली" },
+            { "value": "pulses", "label_en": "Pulses", "label_hi": "दालें" },
+            { "value": "maize", "label_en": "Maize", "label_hi": "मक्का" },
+            { "value": "other", "label_en": "Other", "label_hi": "अन्य" }
+          ],
+          "pdf_mapping": "field_7"
+        },
+        {
+          "id": "crop_type",
+          "label_en": "Crop Type (Season)",
+          "label_hi": "फसल प्रकार (मौसम)",
+          "type": "radio",
+          "required": true,
+          "options": [
+            { "value": "kharif", "label_en": "Kharif", "label_hi": "खरीफ" },
+            { "value": "rabi", "label_en": "Rabi", "label_hi": "रबी" }
+          ],
+          "pdf_mapping": "field_8"
+        },
+        {
+          "id": "area_sown",
+          "label_en": "Area Sown (in hectares)",
+          "label_hi": "बोया गया क्षेत्र (हेक्टेयर में)",
+          "type": "number",
+          "required": true,
+          "validation": { "min": 0.01, "max": 1000 },
+          "pdf_mapping": "field_9"
+        },
+        {
+          "id": "sum_insured",
+          "label_en": "Sum Insured (₹)",
+          "label_hi": "बीमा राशि (₹)",
+          "type": "number",
+          "required": true,
+          "validation": { "min": 1000 },
+          "pdf_mapping": "field_10"
+        },
+        {
+          "id": "premium_amount",
+          "label_en": "Premium Amount (₹)",
+          "label_hi": "प्रीमियम राशि (₹)",
+          "type": "number",
+          "required": true,
+          "validation": { "min": 1 },
+          "pdf_mapping": "field_11"
+        }
+      ]
+    },
+    {
+      "id": "insurance",
+      "title_en": "Insurance Details",
+      "title_hi": "बीमा विवरण",
+      "fields": [
+        {
+          "id": "season",
+          "label_en": "Season",
+          "label_hi": "सीज़न",
+          "type": "select",
+          "required": true,
+          "options": [
+            { "value": "kharif_2025", "label_en": "Kharif 2025", "label_hi": "खरीफ 2025" },
+            { "value": "rabi_2025", "label_en": "Rabi 2025", "label_hi": "रबी 2025" },
+            { "value": "kharif_2026", "label_en": "Kharif 2026", "label_hi": "खरीफ 2026" },
+            { "value": "rabi_2026", "label_en": "Rabi 2026", "label_hi": "रबी 2026" }
+          ],
+          "pdf_mapping": "field_12"
+        },
+        {
+          "id": "year",
+          "label_en": "Year",
+          "label_hi": "वर्ष",
+          "type": "select",
+          "required": true,
+          "options": [
+            { "value": "2025", "label_en": "2025", "label_hi": "2025" },
+            { "value": "2026", "label_en": "2026", "label_hi": "2026" }
+          ],
+          "pdf_mapping": "field_13"
+        }
+      ]
+    },
+    {
+      "id": "bank",
+      "title_en": "Bank Details",
+      "title_hi": "बैंक विवरण",
+      "fields": [
+        {
+          "id": "bank_name",
+          "label_en": "Bank Name",
+          "label_hi": "बैंक का नाम",
+          "type": "text",
+          "required": true,
+          "pdf_mapping": "field_14"
+        },
+        {
+          "id": "account_number",
+          "label_en": "Account Number",
+          "label_hi": "खाता संख्या",
+          "type": "number",
+          "required": true,
+          "validation": { "min_length": 9, "max_length": 18 },
+          "auto_fill": "bank_account",
+          "pdf_mapping": "field_15"
+        },
+        {
+          "id": "ifsc",
+          "label_en": "IFSC Code",
+          "label_hi": "IFSC कोड",
+          "type": "text",
+          "required": true,
+          "validation": { "pattern": "^[A-Z]{4}0[A-Z0-9]{6}$" },
+          "pdf_mapping": "field_16"
+        }
+      ]
+    },
+    {
+      "id": "declaration",
+      "title_en": "Declaration",
+      "title_hi": "घोषणा",
+      "fields": [
+        {
+          "id": "declaration",
+          "label_en": "I declare that the crop details provided are accurate and I agree to the terms of the insurance scheme",
+          "label_hi": "मैं घोषणा करता हूं कि फसल विवरण सही है और बीमा योजना की शर्तों से सहमत हूं",
+          "type": "declaration",
+          "required": true,
+          "pdf_mapping": "field_17"
+        }
+      ]
+    }
+  ],
+  "documents": [
+    {
+      "id": "aadhaar",
+      "name_en": "Aadhaar Card",
+      "name_hi": "आधार कार्ड",
+      "required": true,
+      "auto_available": true
+    },
+    {
+      "id": "land_records",
+      "name_en": "Land Records",
+      "name_hi": "भूमि रिकॉर्ड",
+      "required": true,
+      "auto_available": false
+    },
+    {
+      "id": "bank_passbook",
+      "name_en": "Bank Passbook",
+      "name_hi": "बैंक पासबुक",
+      "required": true,
+      "auto_available": false
+    },
+    {
+      "id": "crop_photo",
+      "name_en": "Crop Photograph",
+      "name_hi": "फसल का फोटो",
+      "required": false,
+      "auto_available": false
+    },
+    {
+      "id": "previous_insurance",
+      "name_en": "Previous Insurance Policy",
+      "name_hi": "पिछली बीमा पॉलिसी",
+      "required": false,
+      "auto_available": false
+    }
+  ],
+  "official": {
+    "website": "https://pmfby.gov.in",
+    "guideline_pdf": "https://pmfby.gov.in/pdf/PMFBY_Guidelines.pdf",
+    "application_portal": "https://pmfby.gov.in",
+    "helpline": "1800-180-1551",
+    "csc_required": true
+  }
+}

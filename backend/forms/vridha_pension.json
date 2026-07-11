@@ -1,0 +1,228 @@
+{
+  "scheme_id": "vridha-pension-up",
+  "version": "1.0",
+  "sections": [
+    {
+      "id": "personal",
+      "title_en": "Personal Information",
+      "title_hi": "व्यक्तिगत जानकारी",
+      "fields": [
+        {
+          "id": "applicant_name",
+          "label_en": "Applicant Name",
+          "label_hi": "आवेदक का नाम",
+          "type": "text",
+          "required": true,
+          "validation": { "min_length": 2, "max_length": 100 },
+          "auto_fill": "name",
+          "pdf_mapping": "field_1"
+        },
+        {
+          "id": "aadhaar",
+          "label_en": "Aadhaar Number",
+          "label_hi": "आधार संख्या",
+          "type": "aadhaar",
+          "required": true,
+          "validation": { "pattern": "^\\d{12}$" },
+          "auto_fill": "aadhaar",
+          "pdf_mapping": "field_2"
+        },
+        {
+          "id": "mobile",
+          "label_en": "Mobile Number",
+          "label_hi": "मोबाइल नंबर",
+          "type": "phone",
+          "required": true,
+          "validation": { "pattern": "^\\d{10}$" },
+          "auto_fill": "phone",
+          "pdf_mapping": "field_3"
+        },
+        {
+          "id": "dob",
+          "label_en": "Date of Birth",
+          "label_hi": "जन्म तिथि",
+          "type": "date",
+          "required": true,
+          "auto_fill": "dob",
+          "pdf_mapping": "field_4"
+        },
+        {
+          "id": "age",
+          "label_en": "Age (as on 1st January)",
+          "label_hi": "आयु (1 जनवरी के अनुसार)",
+          "type": "number",
+          "required": true,
+          "validation": { "min": 60, "max": 120 },
+          "auto_fill": "age",
+          "pdf_mapping": "field_5"
+        },
+        {
+          "id": "gender",
+          "label_en": "Gender",
+          "label_hi": "लिंग",
+          "type": "radio",
+          "required": true,
+          "options": [
+            { "value": "male", "label_en": "Male", "label_hi": "पुरुष" },
+            { "value": "female", "label_en": "Female", "label_hi": "महिला" },
+            { "value": "other", "label_en": "Other", "label_hi": "अन्य" }
+          ],
+          "auto_fill": "gender",
+          "pdf_mapping": "field_6"
+        },
+        {
+          "id": "address",
+          "label_en": "Residential Address",
+          "label_hi": "आवासीय पता",
+          "type": "textarea",
+          "required": true,
+          "validation": { "min_length": 10, "max_length": 500 },
+          "pdf_mapping": "field_7"
+        },
+        {
+          "id": "district",
+          "label_en": "District",
+          "label_hi": "जिला",
+          "type": "text",
+          "required": true,
+          "auto_fill": "district",
+          "pdf_mapping": "field_8"
+        },
+        {
+          "id": "state",
+          "label_en": "State",
+          "label_hi": "राज्य",
+          "type": "text",
+          "required": true,
+          "auto_fill": "state",
+          "pdf_mapping": "field_9"
+        }
+      ]
+    },
+    {
+      "id": "bank",
+      "title_en": "Bank Details",
+      "title_hi": "बैंक विवरण",
+      "fields": [
+        {
+          "id": "bank_name",
+          "label_en": "Bank Name",
+          "label_hi": "बैंक का नाम",
+          "type": "text",
+          "required": true,
+          "pdf_mapping": "field_10"
+        },
+        {
+          "id": "account_number",
+          "label_en": "Account Number",
+          "label_hi": "खाता संख्या",
+          "type": "number",
+          "required": true,
+          "validation": { "min_length": 9, "max_length": 18 },
+          "auto_fill": "bank_account",
+          "pdf_mapping": "field_11"
+        },
+        {
+          "id": "ifsc",
+          "label_en": "IFSC Code",
+          "label_hi": "IFSC कोड",
+          "type": "text",
+          "required": true,
+          "validation": { "pattern": "^[A-Z]{4}0[A-Z0-9]{6}$" },
+          "pdf_mapping": "field_12"
+        }
+      ]
+    },
+    {
+      "id": "nominee",
+      "title_en": "Nominee Details",
+      "title_hi": "नामांकित व्यक्ति विवरण",
+      "fields": [
+        {
+          "id": "nominee_name",
+          "label_en": "Nominee Name",
+          "label_hi": "नामांकित व्यक्ति का नाम",
+          "type": "text",
+          "required": true,
+          "validation": { "min_length": 2, "max_length": 100 },
+          "pdf_mapping": "field_13"
+        },
+        {
+          "id": "nominee_relation",
+          "label_en": "Relation with Nominee",
+          "label_hi": "नामांकित व्यक्ति से संबंध",
+          "type": "select",
+          "required": true,
+          "options": [
+            { "value": "spouse", "label_en": "Spouse", "label_hi": "पति/पत्नी" },
+            { "value": "son", "label_en": "Son", "label_hi": "पुत्र" },
+            { "value": "daughter", "label_en": "Daughter", "label_hi": "पुत्री" },
+            { "value": "brother", "label_en": "Brother", "label_hi": "भाई" },
+            { "value": "sister", "label_en": "Sister", "label_hi": "बहन" },
+            { "value": "other", "label_en": "Other", "label_hi": "अन्य" }
+          ],
+          "pdf_mapping": "field_14"
+        }
+      ]
+    },
+    {
+      "id": "declaration",
+      "title_en": "Declaration",
+      "title_hi": "घोषणा",
+      "fields": [
+        {
+          "id": "declaration",
+          "label_en": "I declare that I am a resident of Uttar Pradesh aged 60+ and all information provided is true",
+          "label_hi": "मैं घोषणा करता हूं कि मैं उत्तर प्रदेश का 60 वर्ष से अधिक आयु का निवासी हूं और सभी जानकारी सत्य है",
+          "type": "declaration",
+          "required": true,
+          "pdf_mapping": "field_15"
+        }
+      ]
+    }
+  ],
+  "documents": [
+    {
+      "id": "aadhaar",
+      "name_en": "Aadhaar Card",
+      "name_hi": "आधार कार्ड",
+      "required": true,
+      "auto_available": true
+    },
+    {
+      "id": "age_proof",
+      "name_en": "Age Proof",
+      "name_hi": "आयु प्रमाण पत्र",
+      "required": true,
+      "auto_available": false
+    },
+    {
+      "id": "bank_passbook",
+      "name_en": "Bank Passbook",
+      "name_hi": "बैंक पासबुक",
+      "required": true,
+      "auto_available": false
+    },
+    {
+      "id": "address_proof",
+      "name_en": "Address Proof",
+      "name_hi": "निवास प्रमाण पत्र",
+      "required": true,
+      "auto_available": false
+    },
+    {
+      "id": "photograph",
+      "name_en": "Passport Size Photograph",
+      "name_hi": "पासपोर्ट साइज़ फोटो",
+      "required": true,
+      "auto_available": false
+    }
+  ],
+  "official": {
+    "website": "https://socialwelfare.up.gov.in",
+    "guideline_pdf": "https://socialwelfare.up.gov.in/guidelines/vridha-pension.pdf",
+    "application_portal": "https://socialwelfare.up.gov.in",
+    "helpline": "1800-180-3020",
+    "csc_required": true
+  }
+}

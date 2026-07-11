@@ -1,0 +1,216 @@
+{
+  "scheme_id": "pm-ujjwala",
+  "version": "1.0",
+  "sections": [
+    {
+      "id": "personal",
+      "title_en": "Personal Information",
+      "title_hi": "व्यक्तिगत जानकारी",
+      "fields": [
+        {
+          "id": "applicant_name",
+          "label_en": "Applicant Name (Female)",
+          "label_hi": "आवेदिका का नाम (महिला)",
+          "type": "text",
+          "required": true,
+          "validation": { "min_length": 2, "max_length": 100 },
+          "auto_fill": "name",
+          "pdf_mapping": "field_1"
+        },
+        {
+          "id": "aadhaar",
+          "label_en": "Aadhaar Number",
+          "label_hi": "आधार संख्या",
+          "type": "aadhaar",
+          "required": true,
+          "validation": { "pattern": "^\\d{12}$" },
+          "auto_fill": "aadhaar",
+          "pdf_mapping": "field_2"
+        },
+        {
+          "id": "mobile",
+          "label_en": "Mobile Number",
+          "label_hi": "मोबाइल नंबर",
+          "type": "phone",
+          "required": true,
+          "validation": { "pattern": "^\\d{10}$" },
+          "auto_fill": "phone",
+          "pdf_mapping": "field_3"
+        },
+        {
+          "id": "dob",
+          "label_en": "Date of Birth",
+          "label_hi": "जन्म तिथि",
+          "type": "date",
+          "required": true,
+          "auto_fill": "dob",
+          "pdf_mapping": "field_4"
+        },
+        {
+          "id": "husband_name",
+          "label_en": "Husband's Name",
+          "label_hi": "पति का नाम",
+          "type": "text",
+          "required": true,
+          "validation": { "min_length": 2, "max_length": 100 },
+          "pdf_mapping": "field_5"
+        }
+      ]
+    },
+    {
+      "id": "family",
+      "title_en": "Family Details",
+      "title_hi": "परिवार विवरण",
+      "fields": [
+        {
+          "id": "family_head_name",
+          "label_en": "Family Head Name",
+          "label_hi": "परिवार मुखिया का नाम",
+          "type": "text",
+          "required": true,
+          "validation": { "min_length": 2, "max_length": 100 },
+          "pdf_mapping": "field_6"
+        },
+        {
+          "id": "family_size",
+          "label_en": "Family Size",
+          "label_hi": "परिवार के सदस्यों की संख्या",
+          "type": "number",
+          "required": true,
+          "validation": { "min": 1, "max": 20 },
+          "pdf_mapping": "field_7"
+        },
+        {
+          "id": "bpl_card_number",
+          "label_en": "BPL Card Number",
+          "label_hi": "बीपीएल कार्ड संख्या",
+          "type": "text",
+          "required": true,
+          "validation": { "min_length": 5, "max_length": 20 },
+          "pdf_mapping": "field_8"
+        }
+      ]
+    },
+    {
+      "id": "bank",
+      "title_en": "Bank Details",
+      "title_hi": "बैंक विवरण",
+      "fields": [
+        {
+          "id": "bank_name",
+          "label_en": "Bank Name",
+          "label_hi": "बैंक का नाम",
+          "type": "text",
+          "required": true,
+          "pdf_mapping": "field_9"
+        },
+        {
+          "id": "account_number",
+          "label_en": "Account Number",
+          "label_hi": "खाता संख्या",
+          "type": "number",
+          "required": true,
+          "validation": { "min_length": 9, "max_length": 18 },
+          "auto_fill": "bank_account",
+          "pdf_mapping": "field_10"
+        },
+        {
+          "id": "ifsc",
+          "label_en": "IFSC Code",
+          "label_hi": "IFSC कोड",
+          "type": "text",
+          "required": true,
+          "validation": { "pattern": "^[A-Z]{4}0[A-Z0-9]{6}$" },
+          "pdf_mapping": "field_11"
+        },
+        {
+          "id": "district",
+          "label_en": "District",
+          "label_hi": "जिला",
+          "type": "text",
+          "required": true,
+          "auto_fill": "district",
+          "pdf_mapping": "field_12"
+        },
+        {
+          "id": "state",
+          "label_en": "State",
+          "label_hi": "राज्य",
+          "type": "select",
+          "required": true,
+          "options": [
+            { "value": "Andhra Pradesh", "label_en": "Andhra Pradesh", "label_hi": "आंध्र प्रदेश" },
+            { "value": "Bihar", "label_en": "Bihar", "label_hi": "बिहार" },
+            { "value": "Madhya Pradesh", "label_en": "Madhya Pradesh", "label_hi": "मध्य प्रदेश" },
+            { "value": "Uttar Pradesh", "label_en": "Uttar Pradesh", "label_hi": "उत्तर प्रदेश" },
+            { "value": "Rajasthan", "label_en": "Rajasthan", "label_hi": "राजस्थान" },
+            { "value": "West Bengal", "label_en": "West Bengal", "label_hi": "पश्चिम बंगाल" },
+            { "value": "Odisha", "label_en": "Odisha", "label_hi": "ओडिशा" },
+            { "value": "Others", "label_en": "Other", "label_hi": "अन्य" }
+          ],
+          "auto_fill": "state",
+          "pdf_mapping": "field_13"
+        }
+      ]
+    },
+    {
+      "id": "declaration",
+      "title_en": "Declaration",
+      "title_hi": "घोषणा",
+      "fields": [
+        {
+          "id": "declaration",
+          "label_en": "I declare that I am a woman from a BPL family and all information provided is true",
+          "label_hi": "मैं घोषणा करती हूं कि मैं बीपीएल परिवार की महिला हूं और सभी जानकारी सत्य है",
+          "type": "declaration",
+          "required": true,
+          "pdf_mapping": "field_14"
+        }
+      ]
+    }
+  ],
+  "documents": [
+    {
+      "id": "aadhaar",
+      "name_en": "Aadhaar Card",
+      "name_hi": "आधार कार्ड",
+      "required": true,
+      "auto_available": true
+    },
+    {
+      "id": "bpl_card",
+      "name_en": "BPL Card",
+      "name_hi": "बीपीएल कार्ड",
+      "required": true,
+      "auto_available": false
+    },
+    {
+      "id": "bank_passbook",
+      "name_en": "Bank Passbook",
+      "name_hi": "बैंक पासबुक",
+      "required": true,
+      "auto_available": false
+    },
+    {
+      "id": "family_photo",
+      "name_en": "Family Photograph",
+      "name_hi": "परिवार का फोटो",
+      "required": false,
+      "auto_available": false
+    },
+    {
+      "id": "ration_card",
+      "name_en": "Ration Card",
+      "name_hi": "राशन कार्ड",
+      "required": true,
+      "auto_available": false
+    }
+  ],
+  "official": {
+    "website": "https://www.pmujjwalayojana.com",
+    "guideline_pdf": "https://pmujjwalayojana.com/assets/pdf/guidelines.pdf",
+    "application_portal": "https://pmujjwalayojana.com",
+    "helpline": "1800-180-1111",
+    "csc_required": true
+  }
+}

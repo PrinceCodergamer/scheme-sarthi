@@ -1,0 +1,332 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #1B4B8F;
+  --primary-light: #EAF1FA;
+  --saffron: #FF9933;
+  --green: #138808;
+  --danger: #D93025;
+  --warning: #F5A623;
+  --surface: #FFFFFF;
+  --background: #F7F9FC;
+  --text-primary: #1A1D29;
+  --text-secondary: #5A6072;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Noto Sans Devanagari', 'Noto Sans', system-ui, sans-serif;
+  background: var(--background);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.tricolor-strip {
+  background: linear-gradient(90deg, #FF9933 0%, #FF9933 33%, #FFFFFF 33%, #FFFFFF 66%, #138808 66%, #138808 100%);
+  height: 4px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+}
+
+.phone-frame {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: var(--surface);
+  box-shadow: 0 0 40px rgba(0,0,0,0.1);
+  position: relative;
+  overflow-x: hidden;
+}
+
+@media (min-width: 481px) {
+  body {
+    background: #E8ECF2;
+  }
+  .phone-frame {
+    border-radius: 24px;
+    margin: 20px auto;
+    min-height: calc(100vh - 40px);
+  }
+}
+
+.btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 52px;
+  padding: 0 24px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--primary), #2563AC);
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  width: 100%;
+  text-decoration: none;
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 8px rgba(27,75,143,0.3);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 52px;
+  padding: 0 24px;
+  border-radius: 12px;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+  width: 100%;
+  text-decoration: none;
+}
+
+.btn-secondary:active {
+  transform: scale(0.98);
+}
+
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.status-chip.lapsed {
+  background: rgba(217,48,37,0.1);
+  color: var(--danger);
+}
+
+.status-chip.at-risk {
+  background: rgba(245,166,35,0.1);
+  color: var(--warning);
+}
+
+.status-chip.eligible {
+  background: rgba(19,136,8,0.1);
+  color: var(--green);
+}
+
+.status-chip.not-eligible {
+  background: rgba(90,96,114,0.1);
+  color: var(--text-secondary);
+}
+
+.scheme-card {
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: 0 2px 12px rgba(27,75,143,0.08);
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.scheme-card:active {
+  transform: scale(0.99);
+}
+
+.scheme-card .color-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+}
+
+.scheme-card .color-bar.lapsed { background: var(--danger); }
+.scheme-card .color-bar.at-risk { background: var(--warning); }
+.scheme-card .color-bar.eligible { background: var(--green); }
+
+.form-input {
+  width: 100%;
+  height: 52px;
+  padding: 0 16px;
+  border-radius: 12px;
+  border: 2px solid #E0E4EC;
+  background: var(--surface);
+  font-size: 16px;
+  font-family: inherit;
+  color: var(--text-primary);
+  transition: border-color 0.2s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.form-input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+.shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes scan-beam {
+  0% { top: 0; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+.scan-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.scan-beam {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  animation: scan-beam 2s ease-in-out infinite;
+}
+
+.floating-label {
+  position: relative;
+  margin-top: 8px;
+}
+
+.floating-label label {
+  position: absolute;
+  top: -10px;
+  left: 12px;
+  background: var(--surface);
+  padding: 0 4px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  z-index: 1;
+}
+
+.progress-stepper {
+  position: relative;
+  padding-left: 40px;
+}
+
+.progress-step {
+  position: relative;
+  padding-bottom: 32px;
+  padding-left: 16px;
+}
+
+.progress-step:last-child {
+  padding-bottom: 0;
+}
+
+.progress-step .step-dot {
+  position: absolute;
+  left: -32px;
+  top: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #D0D5DD;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.progress-step .step-dot.completed {
+  border-color: var(--green);
+  background: var(--green);
+}
+
+.progress-step .step-dot.current {
+  border-color: var(--primary);
+  background: white;
+  animation: pulse-dot 2s infinite;
+}
+
+.progress-step .step-line {
+  position: absolute;
+  left: -23px;
+  top: 24px;
+  width: 2px;
+  bottom: 0;
+  background: #D0D5DD;
+}
+
+.progress-step .step-line.completed {
+  background: var(--green);
+}
+
+.countdown-ring {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.countdown-ring svg {
+  transform: rotate(-90deg);
+}
+
+.page-enter {
+  animation: fade-in 0.3s ease-out;
+}
+
+@keyframes slide-up {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.stagger-1 { animation: slide-up 0.4s ease-out 0.05s both; }
+.stagger-2 { animation: slide-up 0.4s ease-out 0.1s both; }
+.stagger-3 { animation: slide-up 0.4s ease-out 0.15s both; }
+.stagger-4 { animation: slide-up 0.4s ease-out 0.2s both; }
+.stagger-5 { animation: slide-up 0.4s ease-out 0.25s both; }

@@ -1,0 +1,219 @@
+{
+  "scheme_id": "ayushman-bharat",
+  "version": "1.0",
+  "sections": [
+    {
+      "id": "personal",
+      "title_en": "Personal Information",
+      "title_hi": "व्यक्तिगत जानकारी",
+      "fields": [
+        {
+          "id": "applicant_name",
+          "label_en": "Applicant Name",
+          "label_hi": "आवेदक का नाम",
+          "type": "text",
+          "required": true,
+          "validation": { "min_length": 2, "max_length": 100 },
+          "auto_fill": "name",
+          "pdf_mapping": "field_1"
+        },
+        {
+          "id": "aadhaar",
+          "label_en": "Aadhaar Number",
+          "label_hi": "आधार संख्या",
+          "type": "aadhaar",
+          "required": true,
+          "validation": { "pattern": "^\\d{12}$" },
+          "auto_fill": "aadhaar",
+          "pdf_mapping": "field_2"
+        },
+        {
+          "id": "mobile",
+          "label_en": "Mobile Number",
+          "label_hi": "मोबाइल नंबर",
+          "type": "phone",
+          "required": true,
+          "validation": { "pattern": "^\\d{10}$" },
+          "auto_fill": "phone",
+          "pdf_mapping": "field_3"
+        },
+        {
+          "id": "dob",
+          "label_en": "Date of Birth",
+          "label_hi": "जन्म तिथि",
+          "type": "date",
+          "required": true,
+          "auto_fill": "dob",
+          "pdf_mapping": "field_4"
+        },
+        {
+          "id": "gender",
+          "label_en": "Gender",
+          "label_hi": "लिंग",
+          "type": "radio",
+          "required": true,
+          "options": [
+            { "value": "male", "label_en": "Male", "label_hi": "पुरुष" },
+            { "value": "female", "label_en": "Female", "label_hi": "महिला" },
+            { "value": "other", "label_en": "Other", "label_hi": "अन्य" }
+          ],
+          "auto_fill": "gender",
+          "pdf_mapping": "field_5"
+        }
+      ]
+    },
+    {
+      "id": "family",
+      "title_en": "Family Details",
+      "title_hi": "परिवार विवरण",
+      "fields": [
+        {
+          "id": "family_head_name",
+          "label_en": "Family Head Name",
+          "label_hi": "परिवार मुखिया का नाम",
+          "type": "text",
+          "required": true,
+          "validation": { "min_length": 2, "max_length": 100 },
+          "pdf_mapping": "field_6"
+        },
+        {
+          "id": "family_size",
+          "label_en": "Family Size",
+          "label_hi": "परिवार के सदस्यों की संख्या",
+          "type": "number",
+          "required": true,
+          "validation": { "min": 1, "max": 20 },
+          "pdf_mapping": "field_7"
+        }
+      ]
+    },
+    {
+      "id": "economic",
+      "title_en": "Economic Information",
+      "title_hi": "आर्थिक जानकारी",
+      "fields": [
+        {
+          "id": "annual_income",
+          "label_en": "Annual Income (₹)",
+          "label_hi": "वार्षिक आय (₹)",
+          "type": "select",
+          "required": true,
+          "options": [
+            { "value": "0-50000", "label_en": "Up to ₹50,000", "label_hi": "₹50,000 तक" },
+            { "value": "50000-100000", "label_en": "₹50,001 - ₹1,00,000", "label_hi": "₹50,001 - ₹1,00,000" },
+            { "value": "100000-150000", "label_en": "₹1,00,001 - ₹1,50,000", "label_hi": "₹1,00,001 - ₹1,50,000" }
+          ],
+          "auto_fill": "annual_income",
+          "pdf_mapping": "field_8"
+        },
+        {
+          "id": "ration_card_type",
+          "label_en": "Ration Card Type",
+          "label_hi": "राशन कार्ड प्रकार",
+          "type": "radio",
+          "required": true,
+          "options": [
+            { "value": "bpl", "label_en": "BPL (Below Poverty Line)", "label_hi": "बीपीएल" },
+            { "value": "apl", "label_en": "APL (Above Poverty Line)", "label_hi": "एपीएल" },
+            { "value": "phh", "label_en": "PHH (Priority Household)", "label_hi": "पीएचएच" }
+          ],
+          "pdf_mapping": "field_9"
+        }
+      ]
+    },
+    {
+      "id": "hospital",
+      "title_en": "Hospital Preference",
+      "title_hi": "अस्पताल प्राथमिकता",
+      "fields": [
+        {
+          "id": "preferred_hospital",
+          "label_en": "Preferred Hospital (if any)",
+          "label_hi": "पसंदीदा अस्पताल (यदि कोई हो)",
+          "type": "text",
+          "required": false,
+          "validation": { "max_length": 200 },
+          "pdf_mapping": "field_10"
+        },
+        {
+          "id": "state",
+          "label_en": "State",
+          "label_hi": "राज्य",
+          "type": "select",
+          "required": true,
+          "options": [
+            { "value": "Andhra Pradesh", "label_en": "Andhra Pradesh", "label_hi": "आंध्र प्रदेश" },
+            { "value": "Bihar", "label_en": "Bihar", "label_hi": "बिहार" },
+            { "value": "Uttar Pradesh", "label_en": "Uttar Pradesh", "label_hi": "उत्तर प्रदेश" },
+            { "value": "Rajasthan", "label_en": "Rajasthan", "label_hi": "राजस्थान" },
+            { "value": "Madhya Pradesh", "label_en": "Madhya Pradesh", "label_hi": "मध्य प्रदेश" },
+            { "value": "Others", "label_en": "Other", "label_hi": "अन्य" }
+          ],
+          "auto_fill": "state",
+          "pdf_mapping": "field_11"
+        },
+        {
+          "id": "district",
+          "label_en": "District",
+          "label_hi": "जिला",
+          "type": "text",
+          "required": true,
+          "auto_fill": "district",
+          "pdf_mapping": "field_12"
+        }
+      ]
+    },
+    {
+      "id": "declaration",
+      "title_en": "Declaration",
+      "title_hi": "घोषणा",
+      "fields": [
+        {
+          "id": "declaration",
+          "label_en": "I hereby declare that I belong to an eligible family as per SECC database and all information is correct",
+          "label_hi": "मैं घोषणा करता हूं कि मैं SECC डेटाबेस के अनुसार पात्र परिवार से हूं और सभी जानकारी सही है",
+          "type": "declaration",
+          "required": true,
+          "pdf_mapping": "field_13"
+        }
+      ]
+    }
+  ],
+  "documents": [
+    {
+      "id": "aadhaar",
+      "name_en": "Aadhaar Card",
+      "name_hi": "आधार कार्ड",
+      "required": true,
+      "auto_available": true
+    },
+    {
+      "id": "ration_card",
+      "name_en": "Ration Card",
+      "name_hi": "राशन कार्ड",
+      "required": true,
+      "auto_available": false
+    },
+    {
+      "id": "income_certificate",
+      "name_en": "Income Certificate",
+      "name_hi": "आय प्रमाण पत्र",
+      "required": true,
+      "auto_available": false
+    },
+    {
+      "id": "family_photo",
+      "name_en": "Family Photograph",
+      "name_hi": "परिवार का फोटो",
+      "required": false,
+      "auto_available": false
+    }
+  ],
+  "official": {
+    "website": "https://pmjay.gov.in",
+    "guideline_pdf": "https://pmjay.gov.in/sites/default/files/PMJAY_Guidelines.pdf",
+    "application_portal": "https://beneficiary.pmjay.gov.in",
+    "helpline": "1800-111-565",
+    "csc_required": true
+  }
+}
