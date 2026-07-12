@@ -37,9 +37,14 @@ class _PGCursor:
 
 class _PGConnection:
     def __init__(self, dsn):
-        import psycopg2
-        from psycopg2.extras import RealDictCursor
-        self._conn = psycopg2.connect(dsn, cursor_factory=RealDictCursor)
+        self._dsn = dsn
+        self._conn = None
+
+    def _ensure_conn(self):
+        if self._conn is None:
+            import psycopg2
+            from psycopg2.extras import RealDictCursor
+            self._conn = psycopg2.connect(self._dsn, cursor_factory=RealDictCursor)
 
     def _sql(self, sql):
         sql = sql.replace("?", "%s")
@@ -60,11 +65,13 @@ class _PGConnection:
         return sql
 
     def execute(self, sql, params=None):
+        self._ensure_conn()
         sql = self._sql(sql)
         c = self._conn.execute(sql, params or ()) if params is not None else self._conn.execute(sql)
         return _PGCursor(c, self._conn, sql)
 
     def executescript(self, sql):
+        self._ensure_conn()
         for stmt in sql.split(";"):
             s = stmt.strip()
             if s:
@@ -73,10 +80,12 @@ class _PGConnection:
                 self.execute(s)
 
     def commit(self):
+        self._ensure_conn()
         self._conn.commit()
 
     def close(self):
-        self._conn.close()
+        if self._conn:
+            self._conn.close()
 
 
 def is_postgres():

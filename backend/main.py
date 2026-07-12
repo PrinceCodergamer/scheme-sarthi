@@ -151,9 +151,12 @@ class LifeEventRequest(BaseModel):
 
 @app.on_event("startup")
 def startup():
-    init_db()
-    seed_schemes()
-    seed_categories()
+    try:
+        init_db()
+        seed_schemes()
+        seed_categories()
+    except Exception as e:
+        print(f"[startup] DB init deferred: {e}")
 
 
 @app.get("/api/health")
