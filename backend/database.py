@@ -23,7 +23,7 @@ class _PGCursor:
                 c = pg_conn.cursor()
                 c.execute("SELECT LASTVAL()")
                 row = c.fetchone()
-                self.lastrowid = row[0] if row else None
+                self.lastrowid = list(row.values())[0] if row else None
             except Exception:
                 pass
 
@@ -67,8 +67,12 @@ class _PGConnection:
     def execute(self, sql, params=None):
         self._ensure_conn()
         sql = self._sql(sql)
-        c = self._conn.execute(sql, params or ()) if params is not None else self._conn.execute(sql)
-        return _PGCursor(c, self._conn, sql)
+        cur = self._conn.cursor()
+        if params is not None:
+            cur.execute(sql, params)
+        else:
+            cur.execute(sql)
+        return _PGCursor(cur, self._conn, sql)
 
     def executescript(self, sql):
         self._ensure_conn()
