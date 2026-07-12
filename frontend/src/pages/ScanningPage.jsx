@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { useApp } from '../store/appStore'
-import { Shield, User, Settings, Database, CheckCircle, FileText } from 'lucide-react'
+import { Shield, User, Settings, Database, CheckCircle, FileText, Loader, AlertCircle } from 'lucide-react'
 import { Particles } from '../components/ui/particles'
-import { AnimatedGradientText } from '../components/ui/animated-gradient-text'
 
 const pipelineStages = [
   { icon: User, label_hi: 'आपकी प्रोफ़ाइल', label_en: 'Your Profile', key: 'profile' },
@@ -17,6 +16,7 @@ export default function ScanningPage() {
   const { t, lang, runScan, setPage } = useApp()
   const [activeStage, setActiveStage] = useState(0)
   const [msgIndex, setMsgIndex] = useState(0)
+  const [error, setError] = useState(null)
 
   const messages = [
     { hi: 'आपकी योजनाएँ जाँची जा रही हैं…', en: 'Scanning your schemes…' },
@@ -48,50 +48,67 @@ export default function ScanningPage() {
         }
       } catch (err) {
         console.error('Scan error:', err)
-        setPage('results')
+        setError(err.message || 'Scan failed. Please try again.')
       }
     }, 2800)
     return () => clearTimeout(timer)
   }, [])
 
-  return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center px-6 overflow-hidden bg-gradient-to-br from-[#0A1628] via-[#0F1F3D] to-[#1B4B8F]">
-      {/* Grid overlay */}
-      <div
-        className="absolute inset-0 opacity-[0.03] pointer-events-none"
-        style={{
-          backgroundImage: `linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px)`,
-          backgroundSize: '60px 60px',
-        }}
-      />
+  const handleRetry = useCallback(async () => {
+    setError(null)
+    setActiveStage(0)
+    try {
+      const result = await runScan()
+      if (result) setPage('results')
+    } catch (err) {
+      setError(err.message || 'Scan failed. Please try again.')
+    }
+  }, [runScan, setPage])
 
-      {/* Particles */}
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-gradient-to-b from-white to-primary-50">
+        <div className="w-16 h-16 rounded-full bg-danger-light flex items-center justify-center mb-4">
+          <AlertCircle size={32} className="text-danger" />
+        </div>
+        <p className="text-lg font-semibold text-text-primary mb-2">Scan Failed</p>
+        <p className="text-sm text-text-secondary text-center mb-6 max-w-xs">{error}</p>
+        <button onClick={handleRetry} className="btn-primary max-w-xs">
+          <Loader size={18} />
+          {lang === 'hi' ? 'पुनः प्रयास करें' : 'Try Again'}
+        </button>
+        <button onClick={() => setPage('results')} className="btn-secondary mt-3 max-w-xs">
+          {lang === 'hi' ? 'डैशबोर्ड पर जाएँ' : 'Go to Dashboard'}
+        </button>
+      </div>
+    )
+  }
+
+  return (
+    <div className="relative min-h-screen flex flex-col items-center justify-center px-6 overflow-hidden bg-gradient-to-b from-white to-primary-50">
       <Particles
         className="absolute inset-0 pointer-events-none"
-        quantity={80}
-        color="#60A5FA"
-        size={0.5}
+        quantity={60}
+        color="#1B4B8F"
+        size={0.4}
       />
 
       {/* Animated scan icon */}
       <motion.div
-        className="relative w-32 h-32 mb-8"
+        className="relative w-28 h-28 mb-8"
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
       >
-        {/* Outer glow ring */}
-        <div className="absolute inset-0 rounded-full bg-blue-500/20 blur-xl animate-pulse" />
-
-        {/* Gradient spinning rings */}
-        <div className="absolute inset-0 rounded-full border border-blue-400/20" />
+        <div className="absolute inset-0 rounded-full bg-primary/10 blur-xl animate-pulse" />
+        <div className="absolute inset-0 rounded-full border border-primary/20" />
         <div
           className="absolute inset-2 rounded-full animate-spin"
           style={{
             animationDuration: '2s',
             border: '3px solid transparent',
-            borderTopColor: '#3B82F6',
-            borderRightColor: '#8B5CF6',
+            borderTopColor: '#1B4B8F',
+            borderRightColor: '#2563AC',
           }}
         />
         <div
@@ -100,46 +117,30 @@ export default function ScanningPage() {
             animationDuration: '1.2s',
             animationDirection: 'reverse',
             border: '3px solid transparent',
-            borderBottomColor: '#60A5FA',
-            borderLeftColor: '#A78BFA',
-          }}
-        />
-        <div
-          className="absolute inset-6 rounded-full animate-spin"
-          style={{
-            animationDuration: '0.8s',
-            border: '2px solid transparent',
-            borderTopColor: '#93C5FD',
-            borderBottomColor: '#C4B5FD',
+            borderBottomColor: '#1B4B8F',
+            borderLeftColor: '#2563AC',
           }}
         />
 
-        {/* Center shield */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
+          <div className="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center shadow-glow">
             <Shield size={28} color="white" />
           </div>
         </div>
       </motion.div>
 
-      {/* Animated gradient title */}
-      <AnimatedGradientText
-        className="text-2xl font-bold mb-2"
-        colorFrom="#60A5FA"
-        colorTo="#A78BFA"
-        speed={3}
-      >
+      <h2 className="text-2xl font-bold text-text-primary mb-2">
         {lang === 'hi' ? 'स्कैनिंग…' : 'Scanning…'}
-      </AnimatedGradientText>
+      </h2>
 
       <p
-        className="text-sm text-white/60 text-center mb-10 transition-opacity duration-300 h-5"
+        className="text-sm text-text-secondary text-center mb-10 transition-opacity duration-300 h-5"
         key={msgIndex}
       >
         {lang === 'hi' ? messages[msgIndex].hi : messages[msgIndex].en}
       </p>
 
-      {/* Pipeline stages with glass effect */}
+      {/* Pipeline stages */}
       <div className="w-full max-w-xs space-y-3">
         {pipelineStages.map((stage, i) => {
           const isActive = i === activeStage
@@ -154,39 +155,39 @@ export default function ScanningPage() {
               transition={{ delay: i * 0.08, duration: 0.3 }}
             >
               <div
-                className={`flex items-center gap-3 flex-1 px-4 py-2.5 rounded-xl transition-all duration-500 ${
+                className={`flex items-center gap-3 flex-1 px-4 py-2.5 rounded-xl transition-all duration-500 border ${
                   isPast
-                    ? 'bg-white/10 backdrop-blur-sm border border-green-500/30'
+                    ? 'bg-green-light/50 border-green/20'
                     : isActive
-                      ? 'bg-white/15 backdrop-blur-md border border-blue-400/40 shadow-lg shadow-blue-500/10'
-                      : 'bg-white/5 backdrop-blur-sm border border-white/10'
+                      ? 'bg-primary-50 border-primary/30 shadow-sm'
+                      : 'bg-white border-neutral-200'
                 }`}
               >
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-500 ${
                     isPast
-                      ? 'bg-green-500/80 text-white'
+                      ? 'bg-green text-white'
                       : isActive
-                        ? 'bg-gradient-to-br from-blue-500 to-purple-600 text-white scale-110 shadow-md'
-                        : 'bg-white/10 text-white/40'
+                        ? 'bg-primary text-white scale-110 shadow-md'
+                        : 'bg-neutral-100 text-neutral-400'
                   }`}
                 >
                   <StageIcon size={16} />
                 </div>
                 <span
-                  className={`text-[13px] font-medium transition-all duration-500 ${
+                  className={`text-sm font-medium transition-all duration-500 ${
                     isPast
-                      ? 'text-green-400'
+                      ? 'text-green font-semibold'
                       : isActive
-                        ? 'text-white font-semibold'
-                        : 'text-white/40'
+                        ? 'text-primary font-semibold'
+                        : 'text-text-secondary'
                   }`}
                 >
                   {lang === 'hi' ? stage.label_hi : stage.label_en}
                 </span>
                 {isActive && (
                   <div className="ml-auto">
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-ping" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary animate-ping" />
                   </div>
                 )}
               </div>
@@ -200,7 +201,7 @@ export default function ScanningPage() {
         {[0, 1, 2].map(i => (
           <div
             key={i}
-            className="w-2 h-2 rounded-full bg-blue-400 transition-all duration-500"
+            className="w-2 h-2 rounded-full bg-primary transition-all duration-500"
             style={{
               opacity: msgIndex % 3 === i ? 1 : 0.25,
               transform: msgIndex % 3 === i ? 'scale(1.3)' : 'scale(1)',

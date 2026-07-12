@@ -2,8 +2,6 @@ import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Sparkles, X, Send, Bot, User } from 'lucide-react'
 import { useApp } from '../store/appStore'
-import { AnimatedGradientText } from "@/components/ui/animated-gradient-text"
-import { BackgroundBeams } from "@/components/ui/background-beams"
 
 const SUGGESTIONS = [
   'Why did my payment stop?',
@@ -121,24 +119,17 @@ export default function AICopilot() {
               height: '75vh',
               maxHeight: '600px',
             }}
-          >
-            <BackgroundBeams className="opacity-30" />
-
-            {/* Header */}
-            <div className="relative z-10 flex items-center justify-between px-4 py-3 border-b border-white/10 bg-white/[0.04]">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-blue-500/20 backdrop-blur flex items-center justify-center">
-                  <Sparkles size={16} className="text-blue-400" />
+            >
+              {/* Header */}
+              <div className="relative z-10 flex items-center justify-between px-4 py-3 border-b border-white/10 bg-white/[0.04]">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-blue-500/20 backdrop-blur flex items-center justify-center">
+                    <Sparkles size={16} className="text-blue-400" />
+                  </div>
+                  <span className="text-[15px] font-semibold text-white/90">
+                    Scheme Sarthi AI
+                  </span>
                 </div>
-                <AnimatedGradientText
-                  colorFrom="#60a5fa"
-                  colorTo="#a78bfa"
-                  speed={3}
-                  className="text-[15px] font-semibold"
-                >
-                  Scheme Sarthi AI
-                </AnimatedGradientText>
-              </div>
               <button
                 onClick={() => setOpen(false)}
                 className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors"

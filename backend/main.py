@@ -1,4 +1,5 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional, List
@@ -91,6 +92,7 @@ class WhatsAppPhoneUpdate(BaseModel):
     phone: str
 
 
+WHATSAPP_VERIFY_TOKEN = os.environ.get("WHATSAPP_VERIFY_TOKEN", "sarthi_verify_2024")
 MOCK_AADHAAR_DATA = {
     "1234-5678-9012": {
         "name": "Mohan Singh",
@@ -635,6 +637,67 @@ def whatsapp_log():
     return {"log": WHATSAPP_LOG}
 
 
+@app.get("/api/whatsapp/webhook")
+async def whatsapp_webhook_verify(request: Request):
+    mode = request.query_params.get("hub.mode")
+    token = request.query_params.get("hub.verify_token")
+    challenge = request.query_params.get("hub.challenge")
+    if mode == "subscribe" and token == WHATSAPP_VERIFY_TOKEN:
+        return int(challenge)
+    raise HTTPException(403, "Verification failed")
+
+
+@app.post("/api/whatsapp/webhook")
+async def whatsapp_webhook(request: Request):
+    body = await request.json()
+    entry = body.get("entry", [{}])[0]
+    change = entry.get("changes", [{}])[0]
+    value = change.get("value", {})
+    messages = value.get("messages", [])
+
+    for msg in messages:
+        if msg.get("type") == "text":
+            from_number = msg.get("from", "")
+            text = msg.get("text", {}).get("body", "")
+
+            conn = get_connection()
+            profile = conn.execute("SELECT * FROM profiles WHERE phone=?", (from_number,)).fetchone()
+            conn.close()
+
+            context = {}
+            if profile:
+                p = dict(profile)
+                enroll_conn = get_connection()
+                enrollments = enroll_conn.execute(
+                    "SELECT * FROM enrollments WHERE profile_id=?", (p["id"],)
+                ).fetchall()
+                enroll_conn.close()
+                schemes_rows = get_connection().execute("SELECT * FROM schemes").fetchall()
+                get_connection().close()
+
+                schemes = []
+                for r in schemes_rows:
+                    s = dict(r)
+                    for f in ["eligibility", "lapse_triggers", "documents", "form_fields"]:
+                        try: s[f] = json.loads(s[f])
+                        except: s[f] = []
+                    schemes.append(s)
+                results = scan_profile(p, schemes, [dict(e) for e in enrollments])
+                context = {
+                    "name": p["name"], "age": p["age"], "state": p["state"],
+                    "district": p["district"], "occupation": p["occupation"],
+                    "land_owner": p["land_owner"], "land_acres": p["land_acres"],
+                    "annual_income": p["annual_income"],
+                    "scan_results": results, "current_page": "whatsapp",
+                }
+
+            reply = ai_chat(0, text, context)
+            reply_text = reply.get("message", "I'm here to help with your schemes!")
+            send_whatsapp(f"whatsapp:{from_number}", reply_text)
+
+    return {"status": "ok"}
+
+
 @app.get("/api/dashboard/summary")
 def dashboard_summary():
     conn = get_connection()
@@ -815,3 +878,22 @@ def discover_new_slugs():
                     pass
 
     return {"discovered": discovered, "count": len(discovered)}
+
+
+# ──────────────────────────────────────────────
+# Serve frontend static files (must be after all API routes)
+FRONTEND_DIR = Path(__file__).parent.parent / "frontend" / "dist"
+if FRONTEND_DIR.exists():
+    app.mount("/assets", StaticFiles(directory=str(FRONTEND_DIR / "assets")), name="assets")
+
+    from fastapi.responses import FileResponse
+    import mimetypes
+    mimetypes.add_type("application/javascript", ".js")
+    mimetypes.add_type("text/css", ".css")
+
+    @app.get("/{full_path:path}")
+    async def serve_frontend(full_path: str):
+        file_path = FRONTEND_DIR / full_path
+        if file_path.exists() and file_path.is_file():
+            return FileResponse(str(file_path))
+        return FileResponse(str(FRONTEND_DIR / "index.html"))

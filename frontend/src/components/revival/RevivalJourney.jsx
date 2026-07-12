@@ -277,7 +277,7 @@ export default function RevivalJourney({ scheme, onClose, profile }) {
             <p className="text-[16px] text-text-primary font-medium">
               Your {scheme?.name_en || scheme?.name_hi || 'scheme'} benefit has been successfully restored.
             </p>
-            <div className="bg-gradient-to-br from-primary to-[#2563AC] rounded-2xl p-5 text-white">
+            <div className="bg-gradient-to-br from-primary to-primary-dark rounded-2xl p-5 text-white">
               <p className="text-[12px] opacity-80">Estimated Annual Recovery</p>
               <p className="text-[28px] font-bold">
                 {scheme?.benefit_amount || '₹6,000'}/year

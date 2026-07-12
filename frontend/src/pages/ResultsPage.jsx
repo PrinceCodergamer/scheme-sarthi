@@ -6,7 +6,7 @@ import OfficialSourceCard from '../components/trust/OfficialSourceCard'
 import TrustBar from '../components/trust/TrustBar'
 import RevivalJourney from '../components/revival/RevivalJourney'
 import ActionPlan from '../components/ActionPlan'
-import { TrendingUp, AlertTriangle, Clock, CheckCircle, Shield } from 'lucide-react'
+import { TrendingUp, AlertTriangle, Clock, CheckCircle, Shield, AlertCircle } from 'lucide-react'
 
 export default function ResultsPage() {
   const { t, lang, scanResults, profile, setPage } = useApp()
@@ -89,7 +89,7 @@ export default function ResultsPage() {
       <TrustBar compact />
 
       {/* Impact Summary Dashboard */}
-      <div className="bg-gradient-to-br from-primary to-[#2563AC] rounded-2xl p-5 text-white mb-6 stagger-1">
+      <div className="bg-gradient-to-br from-primary to-primary-dark rounded-2xl p-5 text-white mb-6 stagger-1">
         <div className="flex items-center gap-2 mb-3">
           <Shield size={20} />
           <span className="text-[14px] font-medium opacity-90">

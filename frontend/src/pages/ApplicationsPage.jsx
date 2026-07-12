@@ -67,7 +67,7 @@ export default function ApplicationsPage({ onBack }) {
             {lang === 'hi' ? 'आपकी योजनाएँ अब सुरक्षित हैं।' : 'Your schemes are now protected.'}
           </p>
 
-          <div className="bg-gradient-to-br from-primary to-[#2563AC] rounded-2xl p-5 text-white w-full max-w-xs mb-6">
+          <div className="bg-gradient-to-br from-primary to-primary-dark rounded-2xl p-5 text-white w-full max-w-xs mb-6">
             <p className="text-[13px] opacity-80 mb-1">
               {lang === 'hi' ? 'अनुमानित वार्षिक वसूली' : 'Estimated Annual Recovery'}
             </p>

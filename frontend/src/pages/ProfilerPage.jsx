@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useApp } from '../store/appStore'
 import { ChevronRight, ArrowLeft } from 'lucide-react'
-import { BackgroundBeams } from '../components/ui/background-beams'
 
 const questions = [
   { key: 'dob', type: 'date', icon: '🎂' },
@@ -123,11 +122,11 @@ export default function ProfilerPage() {
 
   const renderQuestion = () => {
     const q = currentQ
-    const qClass = "text-white/90 text-center text-[20px] font-semibold mb-6"
-    const optBase = "px-6 py-4 rounded-2xl font-semibold text-[16px] transition-all min-w-[100px] border border-white/10"
-    const optSelected = "bg-blue-500 text-white shadow-lg scale-105 border-blue-400"
-    const optDefault = "bg-white/10 text-white/70 hover:bg-white/20"
-    const inputClass = "w-full px-4 py-3.5 rounded-xl bg-white/10 border border-white/10 text-white placeholder:text-white/30 text-center focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/50"
+    const qClass = "text-text-primary text-center text-xl font-semibold mb-6"
+    const optBase = "px-6 py-4 rounded-xl font-semibold text-base transition-all min-w-[100px] border-2"
+    const optSelected = "bg-primary text-white shadow-md border-primary"
+    const optDefault = "bg-white text-text-secondary border-neutral-200 hover:border-primary hover:text-primary"
+    const inputClass = "w-full px-4 py-3.5 rounded-xl border-2 border-neutral-200 bg-white text-text-primary placeholder:text-neutral-400 text-center focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
 
     if (q.key === 'dob') {
       return (
@@ -282,25 +281,25 @@ export default function ProfilerPage() {
             {schemeOptions.map(s => {
               const selected = answers.schemes.includes(s.id)
               return (
-                <div key={s.id} className="bg-white/5 rounded-2xl p-3 border border-white/10">
+                <div key={s.id} className="bg-white rounded-xl p-3 border border-neutral-200 card">
                   <button onClick={() => {
                     const next = selected ? answers.schemes.filter(x => x !== s.id) : [...answers.schemes, s.id]
                     handleAnswer('schemes', next)
                   }}
-                    className={`w-full text-left px-4 py-3 rounded-xl font-medium text-[15px] transition-all ${
-                      selected ? 'bg-blue-500 text-white' : 'bg-white/10 text-white/80'
+                    className={`w-full text-left px-4 py-3 rounded-xl font-medium text-sm transition-all ${
+                      selected ? 'bg-primary text-white' : 'bg-neutral-50 text-text-secondary hover:text-primary'
                     }`} style={{ minHeight: '48px' }}>
                     {lang === 'hi' ? s.name_hi : s.name_en}
                   </button>
                   {selected && (
                     <div className="mt-2 px-2">
-                      <p className="text-[13px] text-white/50 mb-1">{t('profiler.last_payment')}</p>
+                      <p className="text-xs text-text-secondary mb-1">{t('profiler.last_payment')}</p>
                       <input type="date" value={answers.last_payment_dates[s.id] || ''}
                         onChange={e => {
                           const dates = { ...answers.last_payment_dates, [s.id]: e.target.value }
                           setAnswers(prev => ({ ...prev, last_payment_dates: dates }))
                         }}
-                        className={inputClass} />
+                        className="form-input text-sm h-10" />
                     </div>
                   )}
                 </div>
@@ -335,22 +334,20 @@ export default function ProfilerPage() {
   const hasPrev = currentVisiblePos > 0
 
   return (
-    <div className="relative min-h-screen flex flex-col overflow-hidden bg-gradient-to-br from-[#0A1628] via-[#0F1F3D] to-[#1B4B8F]">
-      <BackgroundBeams />
-      <div className="absolute inset-0 bg-grid-white/[0.02] [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)] pointer-events-none" />
+    <div className="relative min-h-screen flex flex-col overflow-hidden bg-gradient-to-b from-white to-primary-50">
 
       <div className="flex items-center justify-between px-4 py-3 relative z-10">
-        <button onClick={goPrev} className="p-2" style={{ minHeight: '44px', minWidth: '44px' }}>
-          {hasPrev ? <ArrowLeft size={22} className="text-white/70" /> : <div />}
+        <button onClick={goPrev} className="p-2 min-h-[44px] min-w-[44px]">
+          {hasPrev ? <ArrowLeft size={22} className="text-text-secondary" /> : <div />}
         </button>
-        <p className="text-[14px] text-white/50 font-medium">
+        <p className="text-sm text-text-secondary font-medium">
           {t('profiler.progress', { current: currentVisiblePos + 1, total: totalSteps })}
         </p>
         <div style={{ width: 44 }} />
       </div>
 
-      <div className="mx-4 h-1.5 bg-white/10 rounded-full overflow-hidden relative z-10">
-        <div className="h-full bg-gradient-to-r from-blue-400 to-purple-500 rounded-full transition-all duration-500 ease-out" style={{ width: `${progress}%` }} />
+      <div className="mx-4 h-1.5 bg-neutral-100 rounded-full overflow-hidden relative z-10">
+        <div className="h-full bg-primary rounded-full transition-all duration-500 ease-out" style={{ width: `${progress}%` }} />
       </div>
 
       <div className="flex-1 flex flex-col justify-between px-6 pb-6 pt-4 relative z-10">
@@ -374,7 +371,7 @@ export default function ProfilerPage() {
           <button
             onClick={isLast ? handleFinish : goNext}
             disabled={!canProceed()}
-            className="w-full h-[52px] rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold text-[16px] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-blue-500/25 flex items-center justify-center gap-2"
+            className="btn-primary"
           >
             {isLast ? t('profiler.done') : t('profiler.next')}
             {!isLast && <ChevronRight size={20} />}

@@ -127,15 +127,15 @@ export default function AadhaarPage() {
 
   if (error && !kycData) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-gradient-to-b from-primary-light/50 to-white">
-        <div className="w-16 h-16 rounded-full bg-amber-50 flex items-center justify-center mb-4">
+      <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-gradient-to-b from-white to-primary-50">
+        <div className="w-16 h-16 rounded-full bg-warning-light flex items-center justify-center mb-4">
           <AlertCircle size={32} className="text-warning" />
         </div>
-        <p className="text-[16px] font-medium text-text-primary text-center mb-2">
-          Aadhaar not recognised
+        <p className="text-base font-medium text-text-primary text-center mb-2">
+          {lang === 'hi' ? 'आधार की पहचान नहीं हुई' : 'Aadhaar not recognised'}
         </p>
-        <p className="text-[14px] text-text-secondary text-center">
-          Starting manual onboarding...
+        <p className="text-sm text-text-secondary text-center">
+          {lang === 'hi' ? 'मैन्युअल ऑनबोर्डिंग शुरू हो रही है...' : 'Starting manual onboarding...'}
         </p>
         <div className="mt-4 w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
@@ -143,16 +143,16 @@ export default function AadhaarPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col px-6 py-8 bg-gradient-to-b from-primary-light/50 to-white">
+    <div className="min-h-screen flex flex-col px-6 py-8 bg-gradient-to-b from-white to-primary-50">
       <div className="flex-1 flex flex-col items-center justify-center">
-        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-[#2563AC] flex items-center justify-center mb-6 shadow-lg">
+        <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center mb-6 shadow-glow">
           <Fingerprint size={32} color="white" strokeWidth={1.5} />
         </div>
 
-        <h1 className="text-[24px] font-bold text-center mb-2" style={{ color: 'var(--text-primary)' }}>
+        <h1 className="text-2xl font-bold text-center mb-2 text-text-primary">
           {lang === 'hi' ? 'आधार वेरिफिकेशन' : 'Aadhaar Verification'}
         </h1>
-        <p className="text-text-secondary text-center mb-8 max-w-xs">
+        <p className="text-sm text-text-secondary text-center mb-8 max-w-xs">
           {lang === 'hi' ? 'अपना आधार नंबर दर्ज करें' : 'Enter your Aadhaar number'}
         </p>
 
@@ -168,7 +168,7 @@ export default function AadhaarPage() {
                 onChange={(e) => setAadhaar(formatAadhaar(e.target.value))}
                 placeholder="XXXX-XXXX-XXXX"
                 maxLength={14}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-center text-lg tracking-widest font-mono focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                className="form-input text-center text-lg tracking-widest font-mono"
                 autoFocus
               />
             </div>

@@ -146,7 +146,7 @@ export default function ActionPlan({ scanResults }) {
       </div>
 
       {/* Summary */}
-      <div className="bg-gradient-to-br from-primary to-[#2563AC] rounded-2xl p-4 text-white mb-4">
+      <div className="bg-gradient-to-br from-primary to-primary-dark rounded-2xl p-4 text-white mb-4">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-[12px] opacity-80 font-medium">

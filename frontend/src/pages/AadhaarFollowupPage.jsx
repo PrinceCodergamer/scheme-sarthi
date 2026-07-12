@@ -62,16 +62,16 @@ export default function AadhaarFollowupPage() {
   const canContinue = bankChanged !== null && (!needsDob || dob.trim())
 
   return (
-    <div className="min-h-screen flex flex-col px-4 py-6 bg-gradient-to-b from-primary-light/50 to-white">
+    <div className="min-h-screen flex flex-col px-4 py-6 bg-gradient-to-b from-white to-primary-50">
       <div className="flex-1">
         <div className="text-center mb-6">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-[#2563AC] flex items-center justify-center mx-auto mb-4 shadow-lg">
+          <div className="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center mx-auto mb-4 shadow-glow">
             <ChevronRight size={28} color="white" strokeWidth={1.5} className="rotate-90" />
           </div>
-          <h1 className="text-[22px] font-bold">
+          <h1 className="text-xl font-bold text-text-primary">
             {lang === 'hi' ? 'कुछ और जानकारी' : 'A Few More Details'}
           </h1>
-          <p className="text-[14px] text-text-secondary mt-1">
+          <p className="text-sm text-text-secondary mt-1">
             {lang === 'hi' ? 'आपकी प्रोफ़ाइल से पहले ही लोड कर ली गई है' : 'Already loaded from your profile'}
           </p>
         </div>
@@ -92,7 +92,7 @@ export default function AadhaarFollowupPage() {
                 type="date"
                 value={dob}
                 onChange={e => setDob(e.target.value)}
-                className="w-full px-4 py-3.5 rounded-xl bg-white/10 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                className="form-input"
                 required
               />
             </div>
@@ -140,16 +140,16 @@ export default function AadhaarFollowupPage() {
             <div className="flex gap-3">
               <button
                 onClick={() => setBankChanged('yes')}
-                className={`flex-1 py-3 rounded-xl font-semibold text-[15px] transition-all ${
-                  bankChanged === 'yes' ? 'bg-primary text-white shadow-md' : 'bg-primary-light text-primary'
+                className={`flex-1 py-3 rounded-xl font-semibold text-sm transition-all ${
+                  bankChanged === 'yes' ? 'bg-primary text-white shadow-md' : 'bg-primary-light text-primary border-2 border-primary-light'
                 }`}
               >
                 {lang === 'hi' ? 'हाँ' : 'Yes'}
               </button>
               <button
                 onClick={() => setBankChanged('no')}
-                className={`flex-1 py-3 rounded-xl font-semibold text-[15px] transition-all ${
-                  bankChanged === 'no' ? 'bg-primary text-white shadow-md' : 'bg-primary-light text-primary'
+                className={`flex-1 py-3 rounded-xl font-semibold text-sm transition-all ${
+                  bankChanged === 'no' ? 'bg-primary text-white shadow-md' : 'bg-primary-light text-primary border-2 border-primary-light'
                 }`}
               >
                 {lang === 'hi' ? 'नहीं' : 'No'}
