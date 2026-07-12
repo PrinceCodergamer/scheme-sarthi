@@ -76,12 +76,20 @@ class _PGConnection:
 
     def executescript(self, sql):
         self._ensure_conn()
-        for stmt in sql.split(";"):
-            s = stmt.strip()
-            if s:
-                s = s.replace("INTEGER PRIMARY KEY AUTOINCREMENT", "SERIAL PRIMARY KEY")
-                s = s.replace("AUTOINCREMENT", "")
-                self.execute(s)
+        old = self._conn.autocommit
+        self._conn.autocommit = True
+        try:
+            for stmt in sql.split(";"):
+                s = stmt.strip()
+                if s:
+                    s = s.replace("INTEGER PRIMARY KEY AUTOINCREMENT", "SERIAL PRIMARY KEY")
+                    s = s.replace("AUTOINCREMENT", "")
+                    try:
+                        self._conn.cursor().execute(s)
+                    except Exception:
+                        pass
+        finally:
+            self._conn.autocommit = old
 
     def commit(self):
         self._ensure_conn()
