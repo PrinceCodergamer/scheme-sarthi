@@ -21,7 +21,8 @@ export default function WelcomePage() {
   }
 
   const handleDemo = async () => {
-    const res = await fetch('/api/profile/demo', { method: 'POST' })
+    const base = import.meta.env.VITE_API_URL || '/api'
+    const res = await fetch(`${base}/profile/demo`, { method: 'POST' })
     const data = await res.json()
     if (data.profile_id) {
       setProfileId(data.profile_id)

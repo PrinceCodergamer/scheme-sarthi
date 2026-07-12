@@ -56,7 +56,8 @@ export default function AadhaarPage() {
     setLoading(true)
     setError('')
     try {
-      const res = await fetch('/api/aadhaar/verify', {
+      const base = import.meta.env.VITE_API_URL || '/api'
+      const res = await fetch(`${base}/aadhaar/verify`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ aadhaar }),

@@ -50,7 +50,8 @@ export default function ActionPlan({ scanResults }) {
     if (mode !== 'ai') return
     if (!profileId) return
     setLoadingAi(true)
-    fetch(`/api/ai/action-plan?profile_id=${profileId}`)
+    const base = import.meta.env.VITE_API_URL || '/api'
+    fetch(`${base}/ai/action-plan?profile_id=${profileId}`)
       .then(r => r.json())
       .then(data => setAiPlan(data))
       .catch(() => setAiPlan({ error: 'Failed to load AI plan' }))

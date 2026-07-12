@@ -32,7 +32,7 @@ export function AppProvider({ children }) {
     setLang(l => l === 'hi' ? 'en' : 'hi')
   }, [])
 
-  const apiUrl = '/api'
+  const apiUrl = import.meta.env.VITE_API_URL || '/api'
 
   const fetchProfile = useCallback(async (id) => {
     const res = await fetch(`${apiUrl}/profile/${id}`)

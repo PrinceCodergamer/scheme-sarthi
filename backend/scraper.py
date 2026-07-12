@@ -1,3 +1,4 @@
+import os
 import requests
 import json
 import re
@@ -5,7 +6,7 @@ import sys
 import time
 from datetime import datetime
 
-API_KEY = 'tYTy5eEhlu9rFjyxuCr7ra7ACp4dv1RH8gWuHTDc'
+API_KEY = os.environ.get("SCRAPE_API_KEY", "")
 API_BASE = 'https://api.myscheme.gov.in/schemes/v6/public/schemes'
 
 HEADERS = {

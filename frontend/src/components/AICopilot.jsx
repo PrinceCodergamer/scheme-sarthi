@@ -61,9 +61,10 @@ export default function AICopilot() {
     setTyping(true)
 
     const isLifeEvent = detectLifeEvent(text)
+    const base = import.meta.env.VITE_API_URL || '/api'
     const endpoint = isLifeEvent
-      ? `/api/ai/life-event?profile_id=${profileId}`
-      : `/api/ai/chat?profile_id=${profileId}`
+      ? `${base}/ai/life-event?profile_id=${profileId}`
+      : `${base}/ai/chat?profile_id=${profileId}`
 
     try {
       const res = await fetch(endpoint, {

@@ -2,14 +2,96 @@ import sqlite3
 import os
 import json
 
+DATABASE_URL = os.environ.get("DATABASE_URL", "")
 DB_PATH = os.path.join(os.path.dirname(__file__), "scheme_sarthi.db")
 
+
+class _Row(dict):
+    def __getitem__(self, key):
+        if isinstance(key, int):
+            return list(self.values())[key]
+        return dict.__getitem__(self, key)
+
+
+class _PGCursor:
+    def __init__(self, cursor, pg_conn, sql):
+        self._cursor = cursor
+        self.lastrowid = None
+        sql_upper = sql.strip().upper()
+        if sql_upper.startswith("INSERT") and "DO NOTHING" not in sql_upper:
+            try:
+                c = pg_conn.cursor()
+                c.execute("SELECT LASTVAL()")
+                row = c.fetchone()
+                self.lastrowid = row[0] if row else None
+            except Exception:
+                pass
+
+    def fetchone(self):
+        row = self._cursor.fetchone()
+        return _Row(row) if row else None
+
+    def fetchall(self):
+        return [_Row(r) for r in self._cursor.fetchall()]
+
+
+class _PGConnection:
+    def __init__(self, dsn):
+        import psycopg2
+        from psycopg2.extras import RealDictCursor
+        self._conn = psycopg2.connect(dsn, cursor_factory=RealDictCursor)
+
+    def _sql(self, sql):
+        sql = sql.replace("?", "%s")
+        if sql.strip().upper().startswith("INSERT OR REPLACE INTO"):
+            import re
+            m = re.match(
+                r"INSERT\s+OR\s+REPLACE\s+INTO\s+(\w+)\s*\(([^)]+)\)\s*VALUES\s*\(([^)]+)\)",
+                sql, re.IGNORECASE
+            )
+            if m:
+                table = m.group(1)
+                cols = [c.strip() for c in m.group(2).split(",")]
+                updates = ", ".join(f"{c}=EXCLUDED.{c}" for c in cols)
+                return f"INSERT INTO {table} ({', '.join(cols)}) VALUES ({m.group(3)}) ON CONFLICT (id) DO UPDATE SET {updates}"
+        if sql.strip().upper().startswith("INSERT OR IGNORE INTO"):
+            sql = sql.replace("INSERT OR IGNORE INTO", "INSERT INTO")
+            sql += " ON CONFLICT DO NOTHING"
+        return sql
+
+    def execute(self, sql, params=None):
+        sql = self._sql(sql)
+        c = self._conn.execute(sql, params or ()) if params is not None else self._conn.execute(sql)
+        return _PGCursor(c, self._conn, sql)
+
+    def executescript(self, sql):
+        for stmt in sql.split(";"):
+            s = stmt.strip()
+            if s:
+                s = s.replace("INTEGER PRIMARY KEY AUTOINCREMENT", "SERIAL PRIMARY KEY")
+                s = s.replace("AUTOINCREMENT", "")
+                self.execute(s)
+
+    def commit(self):
+        self._conn.commit()
+
+    def close(self):
+        self._conn.close()
+
+
+def is_postgres():
+    return bool(DATABASE_URL)
+
+
 def get_connection():
+    if DATABASE_URL:
+        return _PGConnection(DATABASE_URL)
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode=WAL")
     conn.execute("PRAGMA foreign_keys=ON")
     return conn
+
 
 def init_db():
     conn = get_connection()
@@ -102,11 +184,16 @@ def init_db():
         );
     """)
 
-    # Migration: add date_of_birth if missing
-    try:
-        conn.execute("ALTER TABLE profiles ADD COLUMN date_of_birth TEXT")
-    except sqlite3.OperationalError:
-        pass  # column already exists
+    if is_postgres():
+        try:
+            conn.execute("ALTER TABLE profiles ADD COLUMN IF NOT EXISTS date_of_birth TEXT")
+        except Exception:
+            pass
+    else:
+        try:
+            conn.execute("ALTER TABLE profiles ADD COLUMN date_of_birth TEXT")
+        except sqlite3.OperationalError:
+            pass
 
     conn.commit()
     conn.close()
@@ -144,6 +231,7 @@ def seed_categories():
                      (cid, nhi, nen, icon))
     conn.commit()
     conn.close()
+
 
 def seed_schemes():
     conn = get_connection()
@@ -520,17 +608,16 @@ def seed_schemes():
     conn.commit()
     conn.close()
 
+
 def seed_demo_profile():
     conn = get_connection()
     existing = conn.execute("SELECT id FROM profiles LIMIT 1").fetchone()
     if existing:
         pid = existing["id"]
-        # Ensure enrollments exist
         existing_enrolls = conn.execute("SELECT COUNT(*) FROM enrollments WHERE profile_id=?", (pid,)).fetchone()[0]
         if existing_enrolls > 0:
             conn.close()
             return pid
-        # Re-add demo enrollments
         _insert_demo_enrollments(conn, pid)
         conn.close()
         return pid
@@ -545,6 +632,7 @@ def seed_demo_profile():
     conn.commit()
     conn.close()
     return profile_id
+
 
 def _insert_demo_enrollments(conn, profile_id):
     enrollments = [

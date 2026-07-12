@@ -158,7 +158,16 @@ def startup():
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok"}
+    db_ok = False
+    try:
+        conn = get_connection()
+        conn.execute("SELECT 1")
+        conn.close()
+        db_ok = True
+    except Exception:
+        pass
+    pg_mode = os.environ.get("DATABASE_URL", "") != ""
+    return {"status": "ok", "database": "connected" if db_ok else "error", "mode": "postgresql" if pg_mode else "sqlite"}
 
 
 @app.get("/api/forms/{scheme_id}")
@@ -851,7 +860,9 @@ def scrape_status():
 def discover_new_slugs():
     from scraper import VERIFIED_SLUGS
     import requests
-    api_key = 'tYTy5eEhlu9rFjyxuCr7ra7ACp4dv1RH8gWuHTDc'
+    api_key = os.environ.get("SCRAPE_API_KEY", "")
+    if not api_key:
+        return {"discovered": [], "count": 0, "error": "SCRAPE_API_KEY not set"}
     headers = {'User-Agent': 'Mozilla/5.0', 'x-api-key': api_key}
     base = 'https://api.myscheme.gov.in/schemes/v6/public/schemes'
 
