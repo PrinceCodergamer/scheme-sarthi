@@ -17,15 +17,6 @@ class _PGCursor:
     def __init__(self, cursor, pg_conn, sql):
         self._cursor = cursor
         self.lastrowid = None
-        sql_upper = sql.strip().upper()
-        if sql_upper.startswith("INSERT") and "DO NOTHING" not in sql_upper:
-            try:
-                c = pg_conn.cursor()
-                c.execute("SELECT LASTVAL()")
-                row = c.fetchone()
-                self.lastrowid = list(row.values())[0] if row else None
-            except Exception:
-                pass
 
     def fetchone(self):
         row = self._cursor.fetchone()
@@ -655,10 +646,10 @@ def seed_demo_profile():
 
     cursor = conn.execute("""INSERT INTO profiles
         (name, age, gender, state, district, occupation, land_owner, land_acres, annual_income, bank_account_changed, aadhaar, phone, date_of_birth)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id""",
         ("Mohan", 62, "male", "Uttar Pradesh", "Lucknow", "farmer", 1, 2.0, "100000", 1,
          "1234-5678-9012", "9876543210", "1964-03-15"))
-    profile_id = cursor.lastrowid
+    profile_id = cursor._cursor.fetchone()[0]
     _insert_demo_enrollments(conn, profile_id)
     conn.commit()
     conn.close()

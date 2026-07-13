@@ -286,12 +286,12 @@ def create_profile(profile: ProfileCreate):
     conn = get_connection()
     cursor = conn.execute("""INSERT INTO profiles
         (name, age, gender, state, district, occupation, land_owner, land_acres, annual_income, bank_account_changed, has_daughter, aadhaar, phone, date_of_birth)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id""",
         (profile.name, profile.age, profile.gender, profile.state, profile.district,
          profile.occupation, int(profile.land_owner), profile.land_acres,
          profile.annual_income, int(profile.bank_account_changed), int(profile.has_daughter),
          profile.aadhaar, profile.phone, profile.date_of_birth))
-    profile_id = cursor.lastrowid
+    profile_id = cursor._cursor.fetchone()[0]
     conn.commit()
     conn.close()
     return {"profile_id": profile_id}
@@ -382,9 +382,9 @@ def apply_for_scheme(profile_id: int, scheme_id: str, form_data: dict = {}):
         conn.close()
         raise HTTPException(404, "Scheme not found")
     cursor = conn.execute("""INSERT INTO applications (profile_id, scheme_id, status, stage, form_data)
-        VALUES (?, ?, 'submitted', 0, ?)""",
+        VALUES (?, ?, 'submitted', 0, ?) RETURNING id""",
         (profile_id, scheme_id, json.dumps(form_data, ensure_ascii=False)))
-    app_id = cursor.lastrowid
+    app_id = cursor._cursor.fetchone()[0]
     conn.commit()
 
     scheme = dict(scheme)
