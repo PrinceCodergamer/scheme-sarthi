@@ -160,7 +160,9 @@ def startup():
         seed_schemes()
         print("[startup] seed_schemes done")
     except Exception as e:
+        import traceback
         print(f"[startup] seed_schemes failed: {e}")
+        traceback.print_exc()
     try:
         seed_categories()
         print("[startup] seed_categories done")
