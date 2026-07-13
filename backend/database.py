@@ -218,7 +218,15 @@ def init_db():
         except sqlite3.OperationalError:
             pass
 
-    conn.commit()
+    if is_postgres():
+        try:
+            conn.commit()
+        except Exception as ex:
+            print(f"[init_db] commit error: {ex}")
+            conn._ensure_conn()
+            conn._conn.rollback()
+    else:
+        conn.commit()
     conn.close()
 
 

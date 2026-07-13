@@ -153,10 +153,19 @@ class LifeEventRequest(BaseModel):
 def startup():
     try:
         init_db()
-        seed_schemes()
-        seed_categories()
+        print("[startup] init_db done")
     except Exception as e:
-        print(f"[startup] DB init deferred: {e}")
+        print(f"[startup] init_db failed: {e}")
+    try:
+        seed_schemes()
+        print("[startup] seed_schemes done")
+    except Exception as e:
+        print(f"[startup] seed_schemes failed: {e}")
+    try:
+        seed_categories()
+        print("[startup] seed_categories done")
+    except Exception as e:
+        print(f"[startup] seed_categories failed: {e}")
 
 
 @app.get("/api/health")
