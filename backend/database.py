@@ -86,8 +86,8 @@ class _PGConnection:
                     s = s.replace("AUTOINCREMENT", "")
                     try:
                         self._conn.cursor().execute(s)
-                    except Exception:
-                        pass
+                    except Exception as e:
+                        self._conn.rollback()
         finally:
             self._conn.autocommit = old
 

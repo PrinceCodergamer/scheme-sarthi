@@ -1,33 +1,75 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
-import { ArrowLeft, ArrowRight, Bell, Bot, Check, ChevronRight, ClipboardCheck, FileText, HeartPulse, Home, Leaf, MessageCircle, Plus, Search, ShieldCheck, Sparkles, UserRound } from "lucide-react";
-
-const schemes = [
-  { id: "pm-kisan", name: "PM-KISAN", status: "Lapsed", value: "₹6,000", category: "Income support", context: "Bank account needs re-verification", detail: "Your last instalment may be blocked after a bank-account change. Verify your account to restore benefits." },
-  { id: "fasal", name: "PM Fasal Bima", status: "At risk", value: "Crop cover", category: "Agriculture", context: "Renewal due in 18 days", detail: "Renew before the seasonal deadline to retain crop protection." },
-  { id: "ayushman", name: "Ayushman Bharat", status: "Eligible", value: "₹5 lakh", category: "Health protection", context: "Cashless annual family cover", detail: "Your household qualifies for coverage at empanelled hospitals." },
-];
+import { ArrowLeft, ArrowRight, Bell, Bot, Check, ChevronRight, ClipboardCheck, Search, ShieldCheck, Sparkles, Home } from "lucide-react";
+import { useApp } from './store/appStore';
 
 const labels = {
   en: { home: "Home", schemes: "Schemes", applications: "Applications", reminders: "Reminders", getStarted: "Get started", demo: "Try demo profile", privacy: "Your data stays with you" },
   hi: { home: "होम", schemes: "योजनाएं", applications: "आवेदन", reminders: "रिमाइंडर", getStarted: "शुरू करें", demo: "डेमो प्रोफ़ाइल", privacy: "आपका डेटा आपके पास रहता है" },
 };
 
+function normalizeScheme(item) {
+  const statusMap = { lapsed: "Lapsed", at_risk: "At risk", eligible_unclaimed: "Eligible", not_eligible: "Not eligible" };
+  return {
+    id: item.scheme_id || item.id,
+    name: item.name_en || item.name,
+    status: statusMap[item.status] || item.status || "Unknown",
+    value: item.benefit_amount || item.value || "",
+    category: item.category || "Scheme",
+    context: item.reason_en || item.context || "",
+    detail: item.consequence_en || item.reason_en || item.detail || "",
+    recovery: item.recovery,
+    matched_rules: item.matched_rules,
+    confidence: item.confidence_score,
+  };
+}
+
+function flattenResults(scanResults) {
+  if (!scanResults?.results) return [];
+  const flat = [];
+  for (const cat of ["lapsed", "at_risk", "eligible_unclaimed"]) {
+    for (const item of (scanResults.results[cat] || [])) {
+      flat.push(normalizeScheme({ ...item, status: cat }));
+    }
+  }
+  return flat;
+}
+
 export default function App() {
+  const store = useApp();
   const [page, setPage] = useState("welcome");
   const [lang, setLang] = useState("en");
-  const [profile, setProfile] = useState({ name: "Mohan", age: 62, occupation: "farmer", state: "Uttar Pradesh", district: "Varanasi" });
+  const [localProfile, setLocalProfile] = useState({ name: "Mohan", age: 62, occupation: "farmer", state: "Uttar Pradesh", district: "Varanasi" });
   const [flipped, setFlipped] = useState("");
   const [chat, setChat] = useState(false);
   const [step, setStep] = useState(0);
   const [explain, setExplain] = useState(false);
   const [notice, setNotice] = useState("");
+  const [scanningDone, setScanningDone] = useState(false);
   const reduced = useReducedMotion();
   const t = labels[lang];
 
   const go = (next) => { setPage(next); window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" }); };
-  const toast = (text) => { setNotice(text); window.setTimeout(() => setNotice(""), 2500); };
+  const toast = (text) => { setNotice(text); setTimeout(() => setNotice(""), 2500); };
+
+  const handleDemo = async () => {
+    try {
+      await store.loadDemoProfile();
+      go("scanning");
+    } catch (e) {
+      toast("Demo profile failed, trying offline mode");
+      go("scanning");
+    }
+  };
+
+  const schemes = flattenResults(store.scanResults);
+  const totalBenefit = store.scanResults?.total_benefit || 11000;
+  const estimatedTime = store.scanResults?.estimated_time_minutes || 15;
+  const lapsedCount = store.scanResults?.results?.lapsed?.length || 0;
+  const atRiskCount = store.scanResults?.results?.at_risk?.length || 0;
+  const eligibleCount = store.scanResults?.results?.eligible_unclaimed?.length || 0;
+  const totalSchemes = lapsedCount + atRiskCount + eligibleCount;
 
   return (
     <main className="min-h-screen bg-[#e9efeb] font-['Hind'] text-[#17372a]">
@@ -41,15 +83,29 @@ export default function App() {
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: reduced ? 0 : 0.25 }}
           >
-            {page === "welcome" && <Welcome go={go} t={t} />}
+            {page === "welcome" && <Welcome go={go} t={t} onDemo={handleDemo} />}
             {page === "aadhaar" && <Aadhaar go={go} />}
             {page === "aadhaar_followup" && <Followup go={go} />}
-            {page === "profiler" && <Profiler go={go} step={step} setStep={setStep} profile={profile} setProfile={setProfile} />}
-            {page === "scanning" && <Scanning go={go} reduced={!!reduced} />}
-            {(page === "results" || page === "schemes") && <Results schemes={schemes} flipped={flipped} setFlipped={setFlipped} explain={explain} setExplain={setExplain} go={go} reduced={!!reduced} />}
+            {page === "profiler" && <Profiler go={go} step={step} setStep={setStep} profile={localProfile} setProfile={setLocalProfile} />}
+            {page === "scanning" && <Scanning go={go} reduced={!!reduced} store={store} onDone={() => setScanningDone(true)} />}
+            {(page === "results" || page === "schemes") && (
+              <Results
+                schemes={schemes}
+                totalBenefit={totalBenefit}
+                totalSchemes={totalSchemes}
+                urgentCount={lapsedCount + atRiskCount}
+                estimatedTime={estimatedTime}
+                flipped={flipped}
+                setFlipped={setFlipped}
+                explain={explain}
+                setExplain={setExplain}
+                go={go}
+                reduced={!!reduced}
+              />
+            )}
             {page === "revival" && <Revival go={go} toast={toast} />}
-            {page === "applications" && <Applications toast={toast} />}
-            {page === "reminders" && <Reminders toast={toast} />}
+            {page === "applications" && <ApplicationsPage store={store} toast={toast} />}
+            {page === "reminders" && <RemindersPage store={store} toast={toast} />}
             {page === "admin" && <Admin />}
           </motion.div>
         </AnimatePresence>
@@ -97,7 +153,7 @@ function Header({ page, lang, setLang, go }) {
   );
 }
 
-function Welcome({ go, t }) {
+function Welcome({ go, t, onDemo }) {
   return (
     <section className="px-5 pb-10 pt-10">
       <span className="inline-flex items-center gap-2 rounded-full bg-[#e4f1e8] px-3 py-1.5 font-['DM_Mono'] text-[10px] uppercase tracking-wide text-[#287149]">
@@ -113,7 +169,7 @@ function Welcome({ go, t }) {
         <button onClick={() => go("aadhaar")} className="w-full rounded-2xl bg-[#174f3b] py-4 font-bold text-white">
           {t.getStarted} <ArrowRight className="ml-2 inline" size={17} />
         </button>
-        <button onClick={() => go("scanning")} className="w-full rounded-2xl border border-[#c9d8cd] bg-white py-4 font-bold text-[#174f3b]">
+        <button onClick={onDemo} className="w-full rounded-2xl border border-[#c9d8cd] bg-white py-4 font-bold text-[#174f3b]">
           {t.demo} <Sparkles className="ml-2 inline text-[#bb8321]" size={16} />
         </button>
       </div>
@@ -204,14 +260,27 @@ function Profiler({ go, step, setStep, profile, setProfile }) {
   );
 }
 
-function Scanning({ go, reduced }) {
+function Scanning({ go, reduced, store, onDone }) {
   const [stage, setStage] = useState(0);
-  useState(() => {
-    if (!reduced) {
-      [1, 2, 3, 4, 5].forEach((x) => setTimeout(() => setStage(x), x * 450));
-      setTimeout(() => go("results"), 2800);
+  const [scanStarted, setScanStarted] = useState(false);
+
+  useEffect(() => {
+    if (!scanStarted && store.profileId) {
+      setScanStarted(true);
+      store.runScan().then(() => {
+        go("results");
+      }).catch(() => {
+        go("results");
+      });
     }
-  });
+  }, [store.profileId]);
+
+  useEffect(() => {
+    if (reduced) return;
+    const timers = [1, 2, 3, 4, 5].map((x) => setTimeout(() => setStage(x), x * 450));
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
   return (
     <section className="px-5 py-14 text-center">
       <motion.div
@@ -238,15 +307,15 @@ function Scanning({ go, reduced }) {
   );
 }
 
-function Results({ schemes, flipped, setFlipped, explain, setExplain, go, reduced }) {
+function Results({ schemes, totalBenefit, totalSchemes, urgentCount, estimatedTime, flipped, setFlipped, explain, setExplain, go, reduced }) {
   return (
     <section className="px-5 pb-24 pt-6">
       <p className="font-['DM_Mono'] text-[10px] uppercase tracking-[.14em] text-[#618071]">Your scan is ready</p>
-      <h1 className="mt-2 font-['Source_Serif_4'] text-3xl font-semibold">₹11,000 in support to protect</h1>
+      <h1 className="mt-2 font-['Source_Serif_4'] text-3xl font-semibold">₹{totalBenefit?.toLocaleString?.('en-IN') || totalBenefit} in support to protect</h1>
       <div className="mt-5 rounded-2xl border border-[#d6e4da] bg-[#ebf5ee] p-4">
         <div className="flex items-center gap-3">
           <span className="grid size-10 place-items-center rounded-xl bg-[#174f3b] text-white"><ShieldCheck size={19} /></span>
-          <p className="text-sm leading-5">We found <b>3 high-priority actions</b> across your active and eligible schemes.</p>
+          <p className="text-sm leading-5">We found <b>{schemes.length} high-priority actions</b> across your active and eligible schemes.</p>
         </div>
       </div>
       <div className="mt-6 flex items-center justify-between">
@@ -256,9 +325,13 @@ function Results({ schemes, flipped, setFlipped, explain, setExplain, go, reduce
         </button>
       </div>
       <div className="mt-4 space-y-4">
-        {schemes.map((scheme, index) => (
-          <SchemeCard key={scheme.id} scheme={scheme} index={index} flipped={flipped === scheme.id} toggle={() => setFlipped(flipped === scheme.id ? "" : scheme.id)} explain={explain} reduced={reduced} go={go} />
-        ))}
+        {schemes.length > 0 ? schemes.map((scheme, index) => (
+          <SchemeCard key={scheme.id} scheme={scheme} index={index} flipped={flipped === scheme.id} toggle={() => setFlipped(flipped === scheme.id ? "" : scheme.id)} explain={explain} reduced={reduced} />
+        )) : (
+          <div className="rounded-2xl border border-[#d6e4da] bg-white p-6 text-center text-sm text-[#6b8375]">
+            No schemes found for your profile. Try the demo profile from the home page.
+          </div>
+        )}
       </div>
       <button onClick={() => go("revival")} className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#174f3b] py-4 font-bold text-white">
         Start my action plan <ArrowRight size={17} />
@@ -272,6 +345,9 @@ function Results({ schemes, flipped, setFlipped, explain, setExplain, go, reduce
 
 function SchemeCard({ scheme, index, flipped, toggle, explain, reduced }) {
   const tone = scheme.status === "Lapsed" ? "bg-[#fde4df] text-[#b3422f]" : scheme.status === "At risk" ? "bg-[#fff0cf] text-[#a35b0c]" : "bg-[#dff3e5] text-[#207348]";
+  const timeVal = scheme.recovery?.estimated_minutes ? `${scheme.recovery.estimated_minutes} min` : "8 min";
+  const diffVal = scheme.recovery?.difficulty_en || "Medium";
+  const confVal = scheme.confidence ? `${Math.round(scheme.confidence * 100)}%` : "High";
   return (
     <motion.div
       initial={{ opacity: 0, scale: reduced ? 1 : 1.05 }}
@@ -304,15 +380,19 @@ function SchemeCard({ scheme, index, flipped, toggle, explain, reduced }) {
               <b className="font-['Source_Serif_4'] text-3xl">{scheme.value}</b>
               <p className="mt-1 text-xs text-[#718279]">{scheme.context}</p>
             </div>
-            {explain && <p className="mt-3 border-t border-[#e5ece7] pt-2 text-[11px] text-[#3e7656]">✓ 3 rules matched · Confidence 89%</p>}
+            {explain && scheme.matched_rules?.length > 0 && (
+              <p className="mt-3 border-t border-[#e5ece7] pt-2 text-[11px] text-[#3e7656]">
+                ✓ {scheme.matched_rules.length} rules matched · Confidence {confVal}
+              </p>
+            )}
           </div>
           <div className="card-face rounded-[24px] bg-[#174f3b] p-5 text-white shadow-xl [transform:rotateY(180deg)]">
             <ArrowLeft className="absolute right-5 top-5 text-[#d6e7dc]" size={17} />
             <p className="pr-8 text-sm leading-5 text-[#dcebe2]">{scheme.detail}</p>
             <div className="mt-4 grid grid-cols-3 gap-2">
-              <MiniStat label="Time" value="8 min" />
-              <MiniStat label="Difficulty" value="Medium" />
-              <MiniStat label="Priority" value="High" />
+              <MiniStat label="Time" value={timeVal} />
+              <MiniStat label="Difficulty" value={diffVal} />
+              <MiniStat label="Confidence" value={confVal} />
             </div>
             <span className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#e7bd58] px-3 py-2.5 text-sm font-bold text-[#1a4937]">
               Fix this <ArrowRight size={15} />
@@ -363,26 +443,53 @@ function Revival({ go, toast }) {
   );
 }
 
-function Applications({ toast }) {
+function ApplicationsPage({ store, toast }) {
   const [stage, setStage] = useState(1);
+  const [apps, setApps] = useState([]);
   const labels = ["Submitted", "Verified", "Block Office", "Sanctioned", "Restored"];
+
+  useEffect(() => {
+    if (store.profileId) {
+      store.fetchApplications().then((data) => {
+        if (data) setApps(data);
+      }).catch(() => {});
+    }
+  }, [store.profileId]);
+
   return (
     <section className="px-5 pb-24 pt-6">
       <h1 className="font-['Source_Serif_4'] text-3xl font-semibold">Applications</h1>
       <p className="mt-2 text-sm text-[#6b8074]">Track every restoration request.</p>
-      <div className="mt-8 rounded-2xl border border-[#d5e0d8] bg-white p-5">
-        {labels.map((x, i) => (
-          <div key={x} className="flex gap-3 pb-5 last:pb-0">
-            <span className={`grid size-7 place-items-center rounded-full text-xs ${i <= stage ? "bg-[#174f3b] text-white" : "bg-[#e7eee9] text-[#82968a]"}`}>
-              {i < stage ? <Check size={14} /> : i + 1}
-            </span>
-            <div>
-              <b className="text-sm">{x}</b>
-              <p className="text-xs text-[#73857b]">{i === stage ? "Current stage" : "Completed"}</p>
+      {apps.length > 0 ? apps.map((app, i) => (
+        <div key={app.id || i} className="mt-4 rounded-2xl border border-[#d5e0d8] bg-white p-5">
+          <p className="text-sm font-bold text-[#174f3b]">{app.name_en || app.scheme_id}</p>
+          {labels.map((x, j) => (
+            <div key={x} className="flex gap-3 pb-4 last:pb-0 pt-4">
+              <span className={`grid size-7 place-items-center rounded-full text-xs ${j <= (app.stage || stage) ? "bg-[#174f3b] text-white" : "bg-[#e7eee9] text-[#82968a]"}`}>
+                {j < (app.stage || stage) ? <Check size={14} /> : j + 1}
+              </span>
+              <div>
+                <b className="text-sm">{x}</b>
+                <p className="text-xs text-[#73857b]">{j === (app.stage || stage) ? "Current stage" : "Completed"}</p>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )) : (
+        <div className="mt-8 rounded-2xl border border-[#d5e0d8] bg-white p-5">
+          {labels.map((x, i) => (
+            <div key={x} className="flex gap-3 pb-5 last:pb-0">
+              <span className={`grid size-7 place-items-center rounded-full text-xs ${i <= stage ? "bg-[#174f3b] text-white" : "bg-[#e7eee9] text-[#82968a]"}`}>
+                {i < stage ? <Check size={14} /> : i + 1}
+              </span>
+              <div>
+                <b className="text-sm">{x}</b>
+                <p className="text-xs text-[#73857b]">{i === stage ? "Current stage" : "Completed"}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
       <button onClick={() => { if (stage < 4) setStage(stage + 1); else toast("Benefit restored — congratulations!"); }} className="mt-6 w-full rounded-2xl bg-[#e7bd58] py-4 font-bold text-[#174f3b]">
         {stage < 4 ? "Advance demo stage" : "Celebrate restored benefit"}
       </button>
@@ -390,14 +497,30 @@ function Applications({ toast }) {
   );
 }
 
-function Reminders({ toast }) {
+function RemindersPage({ store, toast }) {
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    if (store.profileId) {
+      store.fetchReminders().then((data) => {
+        if (data) setItems(data);
+      }).catch(() => {});
+    }
+  }, [store.profileId]);
+
   return (
     <section className="px-5 pb-24 pt-6">
       <h1 className="font-['Source_Serif_4'] text-3xl font-semibold">Reminders</h1>
       <p className="mt-2 text-sm text-[#6c8175]">Don&apos;t let support lapse again.</p>
       <div className="mt-6 space-y-3">
-        <ReminderCard days={18} title="PM Fasal Bima renewal" urgent />
-        <ReminderCard days={42} title="Ayushman card update" />
+        {items.length > 0 ? items.map((r, i) => (
+          <ReminderCard key={r.id || i} days={r.due_days || 30} title={r.name_en || r.title_en || "Reminder"} urgent={(r.due_days || 30) <= 30} />
+        )) : (
+          <>
+            <ReminderCard days={18} title="PM Fasal Bima renewal" urgent />
+            <ReminderCard days={42} title="Ayushman card update" />
+          </>
+        )}
       </div>
       <button onClick={() => toast("A demo reminder notification was sent")} className="mt-6 w-full rounded-2xl border border-[#bfd3c5] bg-white py-4 font-bold text-[#236449]">
         Simulate notification
