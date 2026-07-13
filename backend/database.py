@@ -75,21 +75,18 @@ class _PGConnection:
         return _PGCursor(cur, self._conn, sql)
 
     def executescript(self, sql):
-        self._ensure_conn()
-        old = self._conn.autocommit
-        self._conn.autocommit = True
-        try:
-            for stmt in sql.split(";"):
-                s = stmt.strip()
-                if s:
-                    s = s.replace("INTEGER PRIMARY KEY AUTOINCREMENT", "SERIAL PRIMARY KEY")
-                    s = s.replace("AUTOINCREMENT", "")
-                    try:
-                        self._conn.cursor().execute(s)
-                    except Exception as e:
-                        self._conn.rollback()
-        finally:
-            self._conn.autocommit = old
+        import psycopg2
+        statements = [s.strip() for s in sql.split(";") if s.strip()]
+        for stmt in statements:
+            try:
+                s = stmt.replace("INTEGER PRIMARY KEY AUTOINCREMENT", "SERIAL PRIMARY KEY")
+                s = s.replace("AUTOINCREMENT", "")
+                c = psycopg2.connect(self._dsn)
+                c.autocommit = True
+                c.cursor().execute(s)
+                c.close()
+            except Exception:
+                pass
 
     def commit(self):
         self._ensure_conn()
