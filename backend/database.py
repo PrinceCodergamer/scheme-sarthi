@@ -75,7 +75,11 @@ class _PGConnection:
         return _PGCursor(cur, self._conn, sql)
 
     def executescript(self, sql):
-        import psycopg2
+        try:
+            import psycopg2
+        except ImportError as ex:
+            print(f"[executescript] psycopg2 not available: {ex}")
+            return
         statements = [s.strip() for s in sql.split(";") if s.strip()]
         for stmt in statements:
             try:
@@ -85,8 +89,9 @@ class _PGConnection:
                 c.autocommit = True
                 c.cursor().execute(s)
                 c.close()
-            except Exception:
-                pass
+                print(f"[executescript] OK: {stmt[:50]}...")
+            except Exception as ex:
+                print(f"[executescript] SKIP DDL [{stmt[:50]}...]: {ex}")
 
     def commit(self):
         self._ensure_conn()
