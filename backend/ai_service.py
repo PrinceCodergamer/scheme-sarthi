@@ -1,4 +1,6 @@
 import os
+import json
+import re
 from typing import Optional, List, Dict, Any
 from google import genai
 from google.genai import types
@@ -235,7 +237,6 @@ def _format_history(history: List) -> str:
 
 
 def _parse_response(text: str) -> Dict:
-    import re, json
     json_match = re.search(r'\{.*\}', text, re.DOTALL)
     if json_match:
         try:
@@ -243,7 +244,3 @@ def _parse_response(text: str) -> Dict:
         except json.JSONDecodeError:
             pass
     return {"message": text[:500], "suggestions": [], "actions": [], "confidence": "medium"}
-
-
-# Fallback: import json at module level
-import json

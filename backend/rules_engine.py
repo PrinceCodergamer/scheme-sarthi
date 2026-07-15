@@ -66,18 +66,13 @@ def _days_since_last_payment(scheme_enrollments):
     return None, None
 
 
-def _parse_benefit_amount(amt_str):
-    try:
-        parts = amt_str.replace("₹", "").replace(",", "").split("/")
-        return float(parts[0].replace(",", ""))
-    except:
-        return 0
-
-
 def _extract_benefit_value(amt_str):
     try:
-        raw = amt_str.replace("₹", "").replace(",", "").split("/")[0].split("-")
-        return float(raw[0]) if raw else 0
+        raw = amt_str.replace("₹", "").replace(",", "").split("/")[0]
+        raw = raw.split("(")[0].strip()
+        parts = raw.split("-")
+        val = parts[0].strip()
+        return float(val) if val else 0
     except:
         return 0
 

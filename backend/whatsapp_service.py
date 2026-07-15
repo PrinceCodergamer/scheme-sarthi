@@ -117,15 +117,40 @@ def send_whatsapp(to: str, message: str) -> dict:
     return {"status": "simulated", "provider": "simulated", "message": message, "to": to}
 
 
-def send_scheme_alert(to: str, profile_name: str, scheme_name: str, alert_type: str, details: str) -> dict:
-    if alert_type == "lapsed":
-        msg = f"⚠️ *Scheme Lapse Alert*\n\nHi {profile_name},\n\nYour benefit under *{scheme_name}* may have lapsed.\n\n{details}\n\nOpen Scheme Sarthi to take action."
-    elif alert_type == "at_risk":
-        msg = f"🔔 *Scheme At Risk*\n\nHi {profile_name},\n\nYour *{scheme_name}* benefit is at risk.\n\n{details}\n\nOpen Scheme Sarthi to renew."
-    elif alert_type == "reminder":
-        msg = f"📅 *Renewal Reminder*\n\nHi {profile_name},\n\n{scheme_name} renewal is due soon.\n\n{details}"
-    else:
-        msg = f"Hi {profile_name},\n\n{details}"
+TEMPLATES = {
+    "hi": {
+        "lapsed": "⚠️ *योजना लैप्स अलर्ट*\n\nनमस्ते {name},\n\n*{scheme}* के तहत आपका लाभ लैप्स हो सकता है।\n\n{details}\n\nकार्रवाई के लिए योजना सारथी खोलें।",
+        "at_risk": "🔔 *योजना जोखिम में*\n\nनमस्ते {name},\n\nआपका *{scheme}* लाभ जोखिम में है।\n\n{details}\n\nनवीनीकरण के लिए योजना सारथी खोलें।",
+        "reminder": "📅 *नवीनीकरण रिमाइंडर*\n\nनमस्ते {name},\n\n{scheme} का नवीनीकरण जल्द ही देय है।\n\n{details}",
+        "generic": "नमस्ते {name},\n\n{details}",
+    },
+    "ta": {
+        "lapsed": "⚠️ *திட்ட காலாவதி எச்சரிக்கை*\n\nவணக்கம் {name},\n\n*{scheme}* இன் கீழ் உங்கள் பலன் காலாவதியாகியிருக்கலாம்.\n\n{details}\n\nநடவடிக்கை எடுக்க திட்ட சாரதியைத் திறக்கவும்.",
+        "at_risk": "🔔 *திட்டம் இடரில்*\n\nவணக்கம் {name},\n\nஉங்கள் *{scheme}* பலன் இடரில் உள்ளது.\n\n{details}\n\nபுதுப்பிக்க திட்ட சாரதியைத் திறக்கவும்.",
+        "reminder": "📅 *புதுப்பிப்பு நினைவூட்டல்*\n\nவணக்கம் {name},\n\n{scheme} புதுப்பிப்பு விரைவில் காலாவதியாகிறது.\n\n{details}",
+        "generic": "வணக்கம் {name},\n\n{details}",
+    },
+    "bn": {
+        "lapsed": "⚠️ *স্কিম মেয়াদোত্তীর্ণ সতর্কতা*\n\nহ্যালো {name},\n\n*{scheme}* এর অধীনে আপনার সুবিধা মেয়াদোত্তীর্ণ হতে পারে।\n\n{details}\n\nপদক্ষেপ নিতে স্কিম সারথি খুলুন।",
+        "at_risk": "🔔 *স্কিম ঝুঁকিতে*\n\nহ্যালো {name},\n\nআপনার *{scheme}* সুবিধা ঝুঁকিতে রয়েছে।\n\n{details}\n\nনবায়নের জন্য স্কিম সারথি খুলুন।",
+        "reminder": "📅 *নবায়ন রিমাইন্ডার*\n\nহ্যালো {name},\n\n{scheme} নবায়ন শীঘ্রই বকেয়া।\n\n{details}",
+        "generic": "হ্যালো {name},\n\n{details}",
+    },
+    "mr": {
+        "lapsed": "⚠️ *योजना लॅप्स सूचना*\n\nनमस्कार {name},\n\n*{scheme}* अंतर्गत तुमचा लाभ लॅप्स झाला असू शकतो.\n\n{details}\n\nकारवाईसाठी योजना सारथी उघडा.",
+        "at_risk": "🔔 *योजना जोखमीत*\n\nनमस्कार {name},\n\nतुमचा *{scheme}* लाभ जोखमीत आहे.\n\n{details}\n\nनूतनीकरणासाठी योजना सारथी उघडा.",
+        "reminder": "📅 *नूतनीकरण स्मरणपत्र*\n\nनमस्कार {name},\n\n{scheme} चे नूतनीकरण लवकरच बाकी आहे.\n\n{details}",
+        "generic": "नमस्कार {name},\n\n{details}",
+    },
+}
+
+DEFAULT_TEMPLATES = TEMPLATES["hi"]
+
+
+def send_scheme_alert(to: str, profile_name: str, scheme_name: str, alert_type: str, details: str, lang: str = "hi") -> dict:
+    templates = TEMPLATES.get(lang, DEFAULT_TEMPLATES)
+    tmpl = templates.get(alert_type, templates["generic"])
+    msg = tmpl.format(name=profile_name, scheme=scheme_name, details=details)
     return send_whatsapp(to, msg)
 
 
