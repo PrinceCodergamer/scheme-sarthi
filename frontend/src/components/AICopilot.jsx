@@ -61,7 +61,8 @@ export default function AICopilot() {
     setTyping(true)
 
     const isLifeEvent = detectLifeEvent(text)
-    const base = import.meta.env.VITE_API_URL || '/api'
+    const baseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '')
+    const base = baseUrl ? `${baseUrl}/api` : '/api'
     const endpoint = isLifeEvent
       ? `${base}/ai/life-event?profile_id=${profileId}`
       : `${base}/ai/chat?profile_id=${profileId}`
@@ -101,7 +102,7 @@ export default function AICopilot() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-[60] bg-[#17372a]/60 backdrop-blur-sm"
             onClick={() => setOpen(false)}
           />
         )}
@@ -124,8 +125,8 @@ export default function AICopilot() {
               {/* Header */}
               <div className="relative z-10 flex items-center justify-between px-4 py-3 border-b border-white/10 bg-white/[0.04]">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-blue-500/20 backdrop-blur flex items-center justify-center">
-                    <Sparkles size={16} className="text-blue-400" />
+                  <div className="w-8 h-8 rounded-full bg-[#174f3b]/20 backdrop-blur flex items-center justify-center">
+                    <Sparkles size={16} className="text-[#e7bd58]" />
                   </div>
                   <span className="text-[15px] font-semibold text-white/90">
                     Scheme Sarthi AI
@@ -148,8 +149,8 @@ export default function AICopilot() {
                   transition={{ delay: 0.15 }}
                   className="text-center py-6"
                 >
-                  <div className="w-12 h-12 rounded-full bg-blue-500/20 backdrop-blur flex items-center justify-center mx-auto mb-3">
-                    <Bot size={24} className="text-blue-400" />
+                  <div className="w-12 h-12 rounded-full bg-[#174f3b]/20 backdrop-blur flex items-center justify-center mx-auto mb-3">
+                    <Bot size={24} className="text-[#e7bd58]" />
                   </div>
                   <p className="text-[14px] text-white/50">
                     Ask me anything about your schemes!
@@ -167,22 +168,22 @@ export default function AICopilot() {
                 >
                   <div className="flex items-start gap-2 max-w-[85%]">
                     {msg.role === 'assistant' && (
-                      <div className="w-7 h-7 rounded-full bg-blue-500/20 backdrop-blur flex items-center justify-center flex-shrink-0 mt-1">
-                        <Bot size={14} className="text-blue-400" />
+                      <div className="w-7 h-7 rounded-full bg-[#174f3b]/20 backdrop-blur flex items-center justify-center flex-shrink-0 mt-1">
+                        <Bot size={14} className="text-[#e7bd58]" />
                       </div>
                     )}
                     <div
                       className={`px-3.5 py-2.5 rounded-2xl text-[14px] leading-relaxed backdrop-blur ${
                         msg.role === 'user'
-                          ? 'bg-blue-500/20 text-white rounded-br-md'
+                          ? 'bg-[#174f3b]/20 text-white rounded-br-md'
                           : 'bg-white/10 text-white/90 rounded-bl-md'
                       }`}
                     >
                       {msg.content}
                     </div>
                     {msg.role === 'user' && (
-                      <div className="w-7 h-7 rounded-full bg-blue-500/30 backdrop-blur flex items-center justify-center flex-shrink-0 mt-1">
-                        <User size={14} className="text-blue-300" />
+                      <div className="w-7 h-7 rounded-full bg-[#174f3b]/30 backdrop-blur flex items-center justify-center flex-shrink-0 mt-1">
+                        <User size={14} className="text-[#d4e0d4]" />
                       </div>
                     )}
                   </div>
@@ -196,14 +197,14 @@ export default function AICopilot() {
                   className="flex justify-start"
                 >
                   <div className="flex items-start gap-2 max-w-[85%]">
-                    <div className="w-7 h-7 rounded-full bg-blue-500/20 backdrop-blur flex items-center justify-center flex-shrink-0 mt-1">
-                      <Bot size={14} className="text-blue-400" />
+                    <div className="w-7 h-7 rounded-full bg-[#174f3b]/20 backdrop-blur flex items-center justify-center flex-shrink-0 mt-1">
+                      <Bot size={14} className="text-[#e7bd58]" />
                     </div>
                     <div className="px-3.5 py-3 rounded-2xl bg-white/10 backdrop-blur rounded-bl-md">
                       <div className="flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '0ms' }} />
-                        <span className="w-2 h-2 rounded-full bg-blue-300 animate-bounce" style={{ animationDelay: '150ms' }} />
-                        <span className="w-2 h-2 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '300ms' }} />
+                        <span className="w-2 h-2 rounded-full bg-[#e7bd58] animate-bounce" style={{ animationDelay: '0ms' }} />
+                        <span className="w-2 h-2 rounded-full bg-[#d4a848] animate-bounce" style={{ animationDelay: '150ms' }} />
+                        <span className="w-2 h-2 rounded-full bg-[#e7bd58] animate-bounce" style={{ animationDelay: '300ms' }} />
                       </div>
                     </div>
                   </div>
@@ -255,7 +256,7 @@ export default function AICopilot() {
                   disabled={!input.trim()}
                   className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
                     input.trim()
-                      ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-[0_0_12px_rgba(37,99,235,0.3)] hover:shadow-[0_0_20px_rgba(37,99,235,0.5)]'
+                      ? 'bg-gradient-to-r from-[#174f3b] to-[#1d5a42] text-white shadow-[0_0_12px_rgba(22,67,46,0.3)] hover:shadow-[0_0_20px_rgba(22,67,46,0.5)]'
                       : 'bg-white/5 text-white/20'
                   }`}
                 >
@@ -272,8 +273,7 @@ export default function AICopilot() {
         onClick={() => setOpen(true)}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 text-white shadow-[0_0_20px_rgba(37,99,235,0.4)] flex items-center justify-center hover:shadow-[0_0_30px_rgba(37,99,235,0.6)] transition-shadow"
-        style={{ maxWidth: '480px', right: 'calc(50% - 240px + 24px)' }}
+        className="fixed bottom-20 right-5 z-30 w-12 h-12 rounded-2xl bg-[#e7bd58] text-[#174f3b] shadow-[0_12px_24px_rgba(113,81,15,.25)] flex items-center justify-center hover:shadow-[0_16px_32px_rgba(113,81,15,.35)] transition-shadow"
         title="Ask Scheme Sarthi"
       >
         <Sparkles size={24} />

@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
-import { ArrowLeft, ArrowRight, Bell, Bot, Check, ChevronRight, ClipboardCheck, Search, ShieldCheck, Sparkles, Home } from "lucide-react";
+import { ArrowLeft, ArrowRight, Bell, Check, ChevronRight, ClipboardCheck, Search, ShieldCheck, Sparkles, Home } from "lucide-react";
 import { useApp } from './store/appStore';
+import AICopilot from './components/AICopilot';
 
 const labels = {
   en: { home: "Home", schemes: "Schemes", applications: "Applications", reminders: "Reminders", getStarted: "Get started", demo: "Try demo profile", privacy: "Your data stays with you" },
@@ -42,7 +43,6 @@ export default function App() {
   const [lang, setLang] = useState("en");
   const [localProfile, setLocalProfile] = useState({ name: "Mohan", age: 62, occupation: "farmer", state: "Uttar Pradesh", district: "Varanasi" });
   const [flipped, setFlipped] = useState("");
-  const [chat, setChat] = useState(false);
   const [step, setStep] = useState(0);
   const [explain, setExplain] = useState(false);
   const [notice, setNotice] = useState("");
@@ -110,8 +110,7 @@ export default function App() {
           </motion.div>
         </AnimatePresence>
         {!["welcome", "aadhaar", "aadhaar_followup", "profiler", "scanning", "admin"].includes(page) && <BottomNav page={page} go={go} t={t} />}
-        <button onClick={() => setChat(true)} className="fixed bottom-20 right-5 z-30 grid size-12 place-items-center rounded-2xl bg-[#e7bd58] text-[#174f3b] shadow-[0_12px_24px_rgba(113,81,15,.25)]"><Bot size={22} /></button>
-        <Chat open={chat} close={() => setChat(false)} toast={toast} />
+        <AICopilot />
         {notice && (
           <motion.div
             initial={{ opacity: 0, y: 15 }}
@@ -154,6 +153,13 @@ function Header({ page, lang, setLang, go }) {
 }
 
 function Welcome({ go, t, onDemo }) {
+  const [phone, setPhone] = useState("");
+  const { setWhatsappPhone } = useApp();
+  const handlePhone = (v) => {
+    const digits = v.replace(/\D/g, "").slice(0, 10);
+    setPhone(digits);
+    if (digits.length === 10) setWhatsappPhone(`+91${digits}`);
+  };
   return (
     <section className="px-5 pb-10 pt-10">
       <span className="inline-flex items-center gap-2 rounded-full bg-[#e4f1e8] px-3 py-1.5 font-['DM_Mono'] text-[10px] uppercase tracking-wide text-[#287149]">
@@ -173,12 +179,26 @@ function Welcome({ go, t, onDemo }) {
           {t.demo} <Sparkles className="ml-2 inline text-[#bb8321]" size={16} />
         </button>
       </div>
-      <div className="mt-8 grid grid-cols-3 gap-2 text-center text-xs">
+      <div className="mt-6 rounded-2xl border border-[#d6e4da] bg-[#ebf5ee] p-4">
+        <label className="flex items-center gap-3">
+          <span className="grid size-10 place-items-center rounded-xl bg-[#174f3b] text-[#e7bd58]"><Bell size={18} /></span>
+          <div className="flex-1">
+            <p className="text-xs font-bold text-[#174f3b]">WhatsApp updates</p>
+            <p className="mt-0.5 text-[11px] text-[#648074]">Get notified when a scheme is at risk</p>
+          </div>
+        </label>
+        <div className="mt-3 flex gap-2">
+          <span className="flex items-center rounded-xl border border-[#c9d8cd] bg-white px-3 text-sm font-bold text-[#648074]">+91</span>
+          <input value={phone} onChange={(e) => handlePhone(e.target.value)} placeholder="9876543210" maxLength={10}
+            className="min-w-0 flex-1 rounded-xl border border-[#c9d8cd] bg-white px-3 py-2.5 text-sm outline-none focus:border-[#174f3b]" />
+        </div>
+      </div>
+      <div className="mt-6 grid grid-cols-3 gap-2 text-center text-xs">
         <Stat value="427" label="schemes" />
         <Stat value="29" label="states" />
         <Stat value="0" label="data sold" />
       </div>
-      <p className="mt-7 text-center text-xs text-[#6a8073]">{t.privacy} · DPDP-aware by design</p>
+      <p className="mt-5 text-center text-xs text-[#6a8073]">{t.privacy} · DPDP-aware by design</p>
     </section>
   );
 }
@@ -571,52 +591,6 @@ function BottomNav({ page, go, t }) {
         </button>
       ))}
     </nav>
-  );
-}
-
-function Chat({ open, close, toast }) {
-  const [text, setText] = useState("");
-  return (
-    <AnimatePresence>
-      {open && (
-        <motion.aside
-          initial={{ y: "100%" }}
-          animate={{ y: 0 }}
-          exit={{ y: "100%" }}
-          transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed inset-x-0 bottom-0 z-40 mx-auto flex h-[82dvh] max-w-[480px] flex-col rounded-t-[28px] bg-[#174f3b] p-5 text-white shadow-2xl"
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-['DM_Mono'] text-[10px] uppercase tracking-wide text-[#e7bd58]">AI Copilot</p>
-              <h2 className="font-['Source_Serif_4'] text-2xl font-semibold">Ask Scheme Sarthi</h2>
-            </div>
-            <button onClick={close} className="rounded-xl bg-white/10 px-3 py-2 text-sm">Close</button>
-          </div>
-          <div className="mt-6 rounded-2xl bg-white/10 p-4 text-sm leading-6 text-[#dcebe2]">
-            I can explain a scheme, help with documents, or find benefits after a life event.
-          </div>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {["I lost my job", "My daughter was born", "Why is PM-KISAN lapsed?", "मुझे कौन सी योजना मिलेगी?", "Documents needed"].map((x) => (
-              <button key={x} onClick={() => { setText(x); toast("Copilot suggestion added"); }} className="rounded-full border border-white/20 px-3 py-2 text-xs text-[#e3f0e8]">
-                {x}
-              </button>
-            ))}
-          </div>
-          <div className="mt-auto flex gap-2">
-            <input
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder="Ask anything…"
-              className="min-w-0 flex-1 rounded-xl bg-white/10 px-3 py-3 text-sm outline-none placeholder:text-[#bad0c2]"
-            />
-            <button onClick={() => { toast("Copilot is preparing a helpful answer"); setText(""); }} className="rounded-xl bg-[#e7bd58] px-4 text-[#174f3b]">
-              <ArrowRight size={18} />
-            </button>
-          </div>
-        </motion.aside>
-      )}
-    </AnimatePresence>
   );
 }
 
