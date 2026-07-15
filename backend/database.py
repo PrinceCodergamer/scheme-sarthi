@@ -649,7 +649,7 @@ def seed_demo_profile():
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id""",
         ("Mohan", 62, "male", "Uttar Pradesh", "Lucknow", "farmer", 1, 2.0, "100000", 1,
          "1234-5678-9012", "9876543210", "1964-03-15"))
-    profile_id = cursor._cursor.fetchone()[0]
+    profile_id = cursor._cursor.fetchone()["id"]
     _insert_demo_enrollments(conn, profile_id)
     conn.commit()
     conn.close()

@@ -291,7 +291,7 @@ def create_profile(profile: ProfileCreate):
          profile.occupation, int(profile.land_owner), profile.land_acres,
          profile.annual_income, int(profile.bank_account_changed), int(profile.has_daughter),
          profile.aadhaar, profile.phone, profile.date_of_birth))
-    profile_id = cursor._cursor.fetchone()[0]
+    profile_id = cursor._cursor.fetchone()["id"]
     conn.commit()
     conn.close()
     return {"profile_id": profile_id}
@@ -384,7 +384,7 @@ def apply_for_scheme(profile_id: int, scheme_id: str, form_data: dict = {}):
     cursor = conn.execute("""INSERT INTO applications (profile_id, scheme_id, status, stage, form_data)
         VALUES (?, ?, 'submitted', 0, ?) RETURNING id""",
         (profile_id, scheme_id, json.dumps(form_data, ensure_ascii=False)))
-    app_id = cursor._cursor.fetchone()[0]
+    app_id = cursor._cursor.fetchone()["id"]
     conn.commit()
 
     scheme = dict(scheme)
